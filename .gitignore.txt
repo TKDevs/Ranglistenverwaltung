@@ -1,0 +1,8 @@
+# Directories
+backup/
+lib/
+
+# Files
+*.exe
+*.lps
+*.res

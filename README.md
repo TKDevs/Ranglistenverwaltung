@@ -3,10 +3,10 @@
   Ein Projekt für das Fach Informatiksysteme von Jonas Tröger und Paul Kern.
   Eingebundene Themengebiete sind Datenbanken und Softwareentwicklung.
 
-To-do:
+
+##To-do:
   Support für Spracherweiterungen
 
 
-Notes:
-  lpi - projekt Datei
-  pls - session Datei
+##Notes:
+	https://confluence.atlassian.com/bitbucketserver/basic-git-commands-776639767.html

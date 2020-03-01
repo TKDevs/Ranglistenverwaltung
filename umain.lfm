@@ -1,8 +1,0 @@
-object fm_turnierauswertung: Tfm_turnierauswertung
-  Left = 627
-  Height = 240
-  Top = 242
-  Width = 320
-  Caption = 'Turnierauswertung'
-  LCLVersion = '1.8.4.0'
-end

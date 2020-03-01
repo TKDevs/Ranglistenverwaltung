@@ -5,3 +5,8 @@
 
 To-do:
   Support für Spracherweiterungen
+
+
+Notes:
+  lpi - projekt Datei
+  pls - session Datei

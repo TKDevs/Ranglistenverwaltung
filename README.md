@@ -1,15 +1,14 @@
 # Turnierauswertung
+[Trello Projektboard](https://trello.com/b/en6blsCW/turnierauswertung)
 
 	Ein Projekt für das Fach Informatiksysteme von Jonas Tröger und Paul Kern.
 	Eingebundene Themengebiete sind Datenbanken und Softwareentwicklung.
 	
-## Notes:
+## Notizen:
 	Keine Änderungen im Objektinspector außer Name!
 [Git commands](https://confluence.atlassian.com/bitbucketserver/basic-git-commands-776639767.html)
 
 [Markdown Language spreadsheet](https://github.com/adam-p/markdown-here/wiki/Markdown-Cheatsheet#links)
-
-[Trello Projektboard](https://trello.com/b/en6blsCW/turnierauswertung)
 	
 ## Naming conventions:
 	Names should be descriptive; avoid abbreviation.

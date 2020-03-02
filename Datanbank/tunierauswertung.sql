@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Erstellungszeit: 02. Mrz 2020 um 21:02
+-- Erstellungszeit: 02. Mrz 2020 um 21:14
 -- Server-Version: 10.4.11-MariaDB
 -- PHP-Version: 7.4.1
 
@@ -21,6 +21,8 @@ SET time_zone = "+00:00";
 --
 -- Datenbank: `tunierauswertung`
 --
+CREATE DATABASE IF NOT EXISTS `tunierauswertung` DEFAULT CHARACTER SET latin1 COLLATE latin1_german1_ci;
+USE `tunierauswertung`;
 
 -- --------------------------------------------------------
 

@@ -5,7 +5,7 @@
 	
 ## Notes:
 	Keine Änderungen im Objektinspector außer Name!
-	[https://confluence.atlassian.com/bitbucketserver/basic-git-commands-776639767.html]
+	[Git commands](https://confluence.atlassian.com/bitbucketserver/basic-git-commands-776639767.html)
 	
 ## Naming conventions:
 	Names should be descriptive; avoid abbreviation.

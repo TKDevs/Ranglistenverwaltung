@@ -1,8 +1,18 @@
 object fm_turnierauswertung: Tfm_turnierauswertung
-  Left = 627
+  Left = 248
   Height = 240
-  Top = 242
+  Top = 253
   Width = 320
   Caption = 'Turnierauswertung'
-  LCLVersion = '1.8.4.0'
+  OnActivate = FormActivate
+  OnCreate = FormCreate
+  OnDestroy = FormDestroy
+  LCLVersion = '2.0.2.0'
+  object db_connector: TODBCConnection
+    Connected = False
+    LoginPrompt = False
+    KeepConnection = False
+    left = 8
+    top = 8
+  end
 end

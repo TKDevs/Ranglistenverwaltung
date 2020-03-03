@@ -1,8 +1,9 @@
 # Directories
 backup/
 lib/
-bin/
 
 # Files
+*.exe
 *.lps
 *.res
+*.dbg

@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Erstellungszeit: 02. Mrz 2020 um 21:14
+-- Erstellungszeit: 06. Mrz 2020 um 08:38
 -- Server-Version: 10.4.11-MariaDB
 -- PHP-Version: 7.4.1
 
@@ -31,9 +31,28 @@ USE `tunierauswertung`;
 --
 
 CREATE TABLE `basketballrangliste` (
-  `Teamname` varchar(35) COLLATE latin1_german1_ci DEFAULT NULL,
+  `Teamname` varchar(35) COLLATE latin1_german1_ci NOT NULL,
   `Punktzahl` float UNSIGNED DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_german1_ci;
+
+--
+-- Daten für Tabelle `basketballrangliste`
+--
+
+INSERT INTO `basketballrangliste` (`Teamname`, `Punktzahl`) VALUES
+('Kentucky Tigers', 20),
+('Montana Eagles', 45),
+('New York Sharks', 35);
+
+--
+-- Indizes der exportierten Tabellen
+--
+
+--
+-- Indizes für die Tabelle `basketballrangliste`
+--
+ALTER TABLE `basketballrangliste`
+  ADD PRIMARY KEY (`Teamname`);
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;

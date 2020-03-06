@@ -1,18 +1,40 @@
 object fm_turnierauswertung: Tfm_turnierauswertung
-  Left = 248
-  Height = 240
-  Top = 253
-  Width = 320
+  Left = 1195
+  Height = 421
+  Top = 153
+  Width = 576
   Caption = 'Turnierauswertung'
+  ClientHeight = 421
+  ClientWidth = 576
   OnActivate = FormActivate
   OnCreate = FormCreate
   OnDestroy = FormDestroy
   LCLVersion = '2.0.2.0'
+  object cb_tabellen: TDBLookupComboBox
+    Left = 165
+    Height = 23
+    Top = 161
+    Width = 100
+    ListFieldIndex = 0
+    LookupCache = False
+    TabOrder = 0
+  end
   object db_connector: TODBCConnection
     Connected = False
     LoginPrompt = False
     KeepConnection = False
     left = 8
+    top = 8
+  end
+  object db_transaction: TSQLTransaction
+    Active = False
+    left = 56
+    top = 8
+  end
+  object db_start_query: TSQLQuery
+    FieldDefs = <>
+    Params = <>
+    left = 104
     top = 8
   end
 end

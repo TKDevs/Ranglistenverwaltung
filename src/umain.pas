@@ -6,14 +6,15 @@ interface
 
 uses
   Classes, SysUtils, odbcconn, sqldb, db, FileUtil, Forms, Controls, Graphics,
-  Dialogs, StdCtrls, DBCtrls, IniFiles;
+  Dialogs, StdCtrls, DBCtrls, DBGrids, IniFiles;
 
 type
 
   { Tfm_turnierauswertung }
 
   Tfm_turnierauswertung = class(TForm)
-    cb_tabellen: TDBLookupComboBox;
+    db_tabellen: TDBComboBox;
+    db_start_source: TDataSource;
     db_connector: TODBCConnection;
     db_transaction: TSQLTransaction;
     db_start_query: TSQLQuery;
@@ -37,10 +38,15 @@ implementation
 { Tfm_turnierauswertung }
 
 procedure Tfm_turnierauswertung.FormActivate(Sender: TObject);
+var query:AnsiString;
 begin
+  query:='SHOW TABLES';
 
   ConnectDatabase;
-  cb_tabellen.;
+  db_start_query.SQL.AddStrings(query, true);
+  db_start_query.Active:=true;
+  db_tabellen.DataSource:=db_start_source;
+  db_tabellen.DataField:='Tables_in_tunierauswertung';
 end;
 
 procedure Tfm_turnierauswertung.FormCreate(Sender: TObject);
@@ -82,6 +88,10 @@ begin
 
   //Query
   db_start_query.Transaction:=db_transaction;
+  db_start_query.DataBase:=db_connector;
+
+  //Datasource
+  db_start_source.DataSet:=db_start_query;
 end;
 
 end.

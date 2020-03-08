@@ -6,21 +6,29 @@ interface
 
 uses
   Classes, SysUtils, odbcconn, sqldb, db, FileUtil, Forms, Controls, Graphics,
-  Dialogs, StdCtrls, DBCtrls, DBGrids, IniFiles;
+  Dialogs, StdCtrls, DBCtrls, DBGrids, Menus, IniFiles;
 
 type
 
   { Tfm_turnierauswertung }
 
   Tfm_turnierauswertung = class(TForm)
+    bt_tabelle_anzeigen: TButton;
     db_tabellen: TDBComboBox;
     db_start_source: TDataSource;
     db_connector: TODBCConnection;
     db_transaction: TSQLTransaction;
     db_start_query: TSQLQuery;
+    Label1: TLabel;
+    menu_main: TMainMenu;
+    menu_option: TMenuItem;
+    menu_language: TMenuItem;
+    menu_close: TMenuItem;
+    menu_export: TMenuItem;
     procedure FormActivate(Sender: TObject);
     procedure FormCreate(Sender: TObject);
     procedure FormDestroy(Sender: TObject);
+    procedure menu_languageClick(Sender: TObject);
   private
     procedure ConnectDatabase;
   public
@@ -40,6 +48,13 @@ implementation
 procedure Tfm_turnierauswertung.FormActivate(Sender: TObject);
 var query:AnsiString;
 begin
+  Label1.Caption:='Datenbanktabelle :';
+  bt_tabelle_anzeigen.Caption:='zur Tabellenansicht';
+  menu_option.Caption:='Optionen';
+  menu_language.Caption:='Sprache';
+  menu_export.Caption:='Tabelle exportieren';
+  menu_close.Caption:='Beenden';
+
   query:='SHOW TABLES';
 
   ConnectDatabase;
@@ -65,6 +80,11 @@ end;
 procedure Tfm_turnierauswertung.FormDestroy(Sender: TObject);
 begin
   language.free;  //gibt den Speicherplatz der Ini frei
+end;
+
+procedure Tfm_turnierauswertung.menu_languageClick(Sender: TObject);
+begin
+
 end;
 
 procedure Tfm_turnierauswertung.ConnectDatabase;

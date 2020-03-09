@@ -10,9 +10,9 @@ uses
 
 type
 
-  { Tfm_turnierauswertung }
+  { Tfm_tournament }
 
-  Tfm_turnierauswertung = class(TForm)
+  Tfm_tournament = class(TForm)
     bt_tabelle_anzeigen: TButton;
     dbcb_tabellen: TDBComboBox;
     db_start_source: TDataSource;
@@ -39,40 +39,40 @@ type
   end;
 
 var
-  fm_turnierauswertung: Tfm_turnierauswertung;
+  fm_tournament: Tfm_tournament;
   language: TIniFile;
 
 implementation
 
 {$R *.lfm}
 
-{ Tfm_turnierauswertung }
+{ Tfm_tournament }
 
-procedure Tfm_turnierauswertung.FormActivate(Sender: TObject);
+procedure Tfm_tournament.FormActivate(Sender: TObject);
 begin
   FormatGUI;
   ConnectDatabase;
   TabelSelection;
 end;
 
-procedure Tfm_turnierauswertung.FormCreate(Sender: TObject);
+procedure Tfm_tournament.FormCreate(Sender: TObject);
 begin
-  fm_turnierauswertung.Top:=50;
-  fm_turnierauswertung.Left:=50;
+  fm_tournament.Top:=50;
+  fm_tournament.Left:=50;
   CheckLanguageFile;
 end;
 
-procedure Tfm_turnierauswertung.FormDestroy(Sender: TObject);
+procedure Tfm_tournament.FormDestroy(Sender: TObject);
 begin
   language.free;  //gibt den Speicherplatz der Ini frei
 end;
 
-procedure Tfm_turnierauswertung.menu_closeClick(Sender: TObject);
+procedure Tfm_tournament.menu_closeClick(Sender: TObject);
 begin
-  fm_turnierauswertung.Close;
+  fm_tournament.Close;
 end;
 
-procedure Tfm_turnierauswertung.ConnectDatabase;
+procedure Tfm_tournament.ConnectDatabase;
 begin
   //Überprüfen der Verbindung zur Datenbank
   db_connector.DatabaseName:='Turnierauswertung';
@@ -99,7 +99,7 @@ begin
   db_start_source.DataSet:=db_start_query;
 end;
 
-procedure Tfm_turnierauswertung.CheckLanguageFile;
+procedure Tfm_tournament.CheckLanguageFile;
 begin
   //Überprüft ob die Sprachdateien vorhanden sind
 
@@ -114,22 +114,22 @@ begin
   end;
 end;
 
-procedure Tfm_turnierauswertung.FormatGUI;
+procedure Tfm_tournament.FormatGUI;
 begin
   //Legt die Formatierungen für alle GUI-Elemente fest
 
-  fm_turnierauswertung.Caption:='Turnierauswertung';
-  Label1.Caption:='Datenbanktabelle :';
-  bt_tabelle_anzeigen.Caption:='zur Tabellenansicht';
+  fm_tournament.Caption:=language.ReadString('GUI','fm_turnierauswertung','');
+  Label1.Caption:=language.ReadString('GUI','Label1','');;
+  bt_tabelle_anzeigen.Caption:=language.ReadString('GUI','bt_tabelle_anzeigen','');;
   dbcb_tabellen.ReadOnly:=true;
   dbcb_tabellen.Sorted:=true;
-  menu_option.Caption:='Optionen';
-  menu_language.Caption:='Sprache';
-  menu_export.Caption:='Tabelle exportieren';
-  menu_close.Caption:='Beenden';
+  menu_option.Caption:=language.ReadString('GUI','menu_option','');;
+  menu_language.Caption:=language.ReadString('GUI','menu_language','');;
+  menu_export.Caption:=language.ReadString('GUI','menu_export','');;
+  menu_close.Caption:=language.ReadString('GUI','menu_close','');;
 end;
 
-procedure Tfm_turnierauswertung.TabelSelection;
+procedure Tfm_tournament.TabelSelection;
 var query:AnsiString;
 begin
   //Lässt alle Tabellen der Datenbank in der combobox anzeigen

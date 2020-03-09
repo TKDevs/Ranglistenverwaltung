@@ -1,9 +1,9 @@
-object fm_turnierauswertung: Tfm_turnierauswertung
+object fm_tournament: Tfm_tournament
   Left = 660
   Height = 93
   Top = 184
   Width = 377
-  Caption = 'fm_turnierauswertung'
+  Caption = 'fm_tournament'
   ClientHeight = 73
   ClientWidth = 377
   Menu = menu_main

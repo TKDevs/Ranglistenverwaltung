@@ -15,7 +15,7 @@ uses
 begin
   RequireDerivedFormResource:=True;
   Application.Initialize;
-  Application.CreateForm(Tfm_turnierauswertung, fm_turnierauswertung);
+  Application.CreateForm(Tfm_tournament, fm_tournament);
   Application.Run;
 end.
 

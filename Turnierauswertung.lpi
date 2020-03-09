@@ -70,7 +70,7 @@
       <Unit1>
         <Filename Value="src\umain.pas"/>
         <IsPartOfProject Value="True"/>
-        <ComponentName Value="fm_turnierauswertung"/>
+        <ComponentName Value="fm_tournament"/>
         <HasResources Value="True"/>
         <ResourceBaseClass Value="Form"/>
       </Unit1>

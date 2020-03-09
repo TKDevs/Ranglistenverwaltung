@@ -3,7 +3,7 @@ object fm_turnierauswertung: Tfm_turnierauswertung
   Height = 93
   Top = 184
   Width = 377
-  Caption = 'Turnierauswertung'
+  Caption = 'fm_turnierauswertung'
   ClientHeight = 73
   ClientWidth = 377
   Menu = menu_main
@@ -11,7 +11,7 @@ object fm_turnierauswertung: Tfm_turnierauswertung
   OnCreate = FormCreate
   OnDestroy = FormDestroy
   LCLVersion = '2.0.2.0'
-  object db_tabellen: TDBComboBox
+  object dbcb_tabellen: TDBComboBox
     Left = 128
     Height = 23
     Top = 8
@@ -71,6 +71,7 @@ object fm_turnierauswertung: Tfm_turnierauswertung
       end
       object menu_close: TMenuItem
         Caption = 'menu_close'
+        OnClick = menu_closeClick
       end
     end
   end

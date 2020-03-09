@@ -14,7 +14,7 @@ type
 
   Tfm_turnierauswertung = class(TForm)
     bt_tabelle_anzeigen: TButton;
-    db_tabellen: TDBComboBox;
+    dbcb_tabellen: TDBComboBox;
     db_start_source: TDataSource;
     db_connector: TODBCConnection;
     db_transaction: TSQLTransaction;
@@ -28,6 +28,7 @@ type
     procedure FormActivate(Sender: TObject);
     procedure FormCreate(Sender: TObject);
     procedure FormDestroy(Sender: TObject);
+    procedure menu_closeClick(Sender: TObject);
   private
     procedure ConnectDatabase;
     procedure CheckLanguageFile;
@@ -56,12 +57,19 @@ end;
 
 procedure Tfm_turnierauswertung.FormCreate(Sender: TObject);
 begin
+  fm_turnierauswertung.Top:=50;
+  fm_turnierauswertung.Left:=50;
   CheckLanguageFile;
 end;
 
 procedure Tfm_turnierauswertung.FormDestroy(Sender: TObject);
 begin
   language.free;  //gibt den Speicherplatz der Ini frei
+end;
+
+procedure Tfm_turnierauswertung.menu_closeClick(Sender: TObject);
+begin
+  fm_turnierauswertung.Close;
 end;
 
 procedure Tfm_turnierauswertung.ConnectDatabase;
@@ -93,6 +101,8 @@ end;
 
 procedure Tfm_turnierauswertung.CheckLanguageFile;
 begin
+  //Überprüft ob die Sprachdateien vorhanden sind
+
   if(FileExists('deutsch.ini')) then
   	language := TIniFile.Create('deutsch.ini') //Stellt die Vebrindung zur Inifile her
   else
@@ -106,8 +116,13 @@ end;
 
 procedure Tfm_turnierauswertung.FormatGUI;
 begin
+  //Legt die Formatierungen für alle GUI-Elemente fest
+
+  fm_turnierauswertung.Caption:='Turnierauswertung';
   Label1.Caption:='Datenbanktabelle :';
   bt_tabelle_anzeigen.Caption:='zur Tabellenansicht';
+  dbcb_tabellen.ReadOnly:=true;
+  dbcb_tabellen.Sorted:=true;
   menu_option.Caption:='Optionen';
   menu_language.Caption:='Sprache';
   menu_export.Caption:='Tabelle exportieren';
@@ -117,12 +132,14 @@ end;
 procedure Tfm_turnierauswertung.TabelSelection;
 var query:AnsiString;
 begin
+  //Lässt alle Tabellen der Datenbank in der combobox anzeigen
+
   query:='SHOW TABLES';
 
   db_start_query.SQL.AddStrings(query, true);
   db_start_query.Active:=true;
-  db_tabellen.DataSource:=db_start_source;
-  db_tabellen.DataField:='Tables_in_tunierauswertung';
+  dbcb_tabellen.DataSource:=db_start_source;
+  dbcb_tabellen.DataField:='Tables_in_tunierauswertung';
 end;
 
 end.

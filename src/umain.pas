@@ -28,9 +28,11 @@ type
     procedure FormActivate(Sender: TObject);
     procedure FormCreate(Sender: TObject);
     procedure FormDestroy(Sender: TObject);
-    procedure menu_languageClick(Sender: TObject);
   private
     procedure ConnectDatabase;
+    procedure CheckLanguageFile;
+    procedure FormatGUI;
+    procedure TabelSelection;
   public
 
   end;
@@ -46,45 +48,20 @@ implementation
 { Tfm_turnierauswertung }
 
 procedure Tfm_turnierauswertung.FormActivate(Sender: TObject);
-var query:AnsiString;
 begin
-  Label1.Caption:='Datenbanktabelle :';
-  bt_tabelle_anzeigen.Caption:='zur Tabellenansicht';
-  menu_option.Caption:='Optionen';
-  menu_language.Caption:='Sprache';
-  menu_export.Caption:='Tabelle exportieren';
-  menu_close.Caption:='Beenden';
-
-  query:='SHOW TABLES';
-
+  FormatGUI;
   ConnectDatabase;
-  db_start_query.SQL.AddStrings(query, true);
-  db_start_query.Active:=true;
-  db_tabellen.DataSource:=db_start_source;
-  db_tabellen.DataField:='Tables_in_tunierauswertung';
+  TabelSelection;
 end;
 
 procedure Tfm_turnierauswertung.FormCreate(Sender: TObject);
 begin
-  if(FileExists('deutsch.ini')) then
-  	language := TIniFile.Create('deutsch.ini') //Stellt die Vebrindung zur Inifile her
-  else
-  begin
-    ShowMessage('Sprachdateien wurden nicht gefunden!'+ #10#13 +
-    	'Das Programm wird geschlossen.');
-    Halt; //Application.Terminate; nicht möglich da Application.run erst nach
-    			//Form.Create aufgerufen wird
-  end;
+  CheckLanguageFile;
 end;
 
 procedure Tfm_turnierauswertung.FormDestroy(Sender: TObject);
 begin
   language.free;  //gibt den Speicherplatz der Ini frei
-end;
-
-procedure Tfm_turnierauswertung.menu_languageClick(Sender: TObject);
-begin
-
 end;
 
 procedure Tfm_turnierauswertung.ConnectDatabase;
@@ -112,6 +89,40 @@ begin
 
   //Datasource
   db_start_source.DataSet:=db_start_query;
+end;
+
+procedure Tfm_turnierauswertung.CheckLanguageFile;
+begin
+  if(FileExists('deutsch.ini')) then
+  	language := TIniFile.Create('deutsch.ini') //Stellt die Vebrindung zur Inifile her
+  else
+  begin
+    ShowMessage('Sprachdateien wurden nicht gefunden!'+ #10#13 +
+    	'Das Programm wird geschlossen.');
+    Halt; //Application.Terminate; nicht möglich da Application.run erst nach
+    			//Form.Create aufgerufen wird
+  end;
+end;
+
+procedure Tfm_turnierauswertung.FormatGUI;
+begin
+  Label1.Caption:='Datenbanktabelle :';
+  bt_tabelle_anzeigen.Caption:='zur Tabellenansicht';
+  menu_option.Caption:='Optionen';
+  menu_language.Caption:='Sprache';
+  menu_export.Caption:='Tabelle exportieren';
+  menu_close.Caption:='Beenden';
+end;
+
+procedure Tfm_turnierauswertung.TabelSelection;
+var query:AnsiString;
+begin
+  query:='SHOW TABLES';
+
+  db_start_query.SQL.AddStrings(query, true);
+  db_start_query.Active:=true;
+  db_tabellen.DataSource:=db_start_source;
+  db_tabellen.DataField:='Tables_in_tunierauswertung';
 end;
 
 end.

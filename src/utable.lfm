@@ -7,8 +7,7 @@ object fm_table_view: Tfm_table_view
   Menu = menu_main
   OnActivate = FormActivate
   OnCreate = FormCreate
-  OnDestroy = FormDestroy
-  LCLVersion = '2.0.6.0'
+  LCLVersion = '2.0.2.0'
   object menu_main: TMainMenu
     left = 280
     top = 8
@@ -17,11 +16,16 @@ object fm_table_view: Tfm_table_view
       object menu_language: TMenuItem
         Caption = 'menu_language'
       end
+      object menu_export: TMenuItem
+        Caption = 'menu_export'
+      end
       object menu_back: TMenuItem
         Caption = 'menu_back'
+        OnClick = menu_backClick
       end
       object menu_close: TMenuItem
         Caption = 'menu_close'
+        OnClick = menu_closeClick
       end
     end
   end

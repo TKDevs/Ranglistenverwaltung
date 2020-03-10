@@ -10,7 +10,7 @@ object fm_tournament: Tfm_tournament
   OnActivate = FormActivate
   OnCreate = FormCreate
   OnDestroy = FormDestroy
-  LCLVersion = '2.0.6.0'
+  LCLVersion = '2.0.2.0'
   object dbcb_tabellen: TDBComboBox
     Left = 128
     Height = 23

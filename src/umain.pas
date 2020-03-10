@@ -6,7 +6,7 @@ interface
 
 uses
   Classes, SysUtils, odbcconn, sqldb, db, FileUtil, Forms, Controls, Graphics,
-  Dialogs, StdCtrls, DBCtrls, DBGrids, Menus, IniFiles, utable;
+  Dialogs, StdCtrls, DBCtrls, DBGrids, Menus, IniFiles;
 
 type
 
@@ -32,18 +32,19 @@ type
     procedure menu_closeClick(Sender: TObject);
   private
     procedure ConnectDatabase;
-    procedure CheckLanguageFile;
     procedure FormatGUI;
-    procedure TabelSelection;
+    procedure TabelSelection;   
+    procedure CheckLanguageFile;
   public
-
+  	language: TIniFile;
   end;
 
 var
   fm_tournament: Tfm_tournament;
-  language: TIniFile;
 
 implementation
+
+uses utable;
 
 {$R *.lfm}
 
@@ -58,8 +59,8 @@ end;
 
 procedure Tfm_tournament.bt_tabelle_anzeigenClick(Sender: TObject);
 begin
-  fm_tournament.close;
-  fm_table_view.show;
+  fm_table_view.show; 
+  fm_tournament.Hide;
 end;
 
 procedure Tfm_tournament.FormCreate(Sender: TObject);

@@ -6,7 +6,7 @@ interface
 
 uses
   Classes, SysUtils, odbcconn, sqldb, db, FileUtil, Forms, Controls, Graphics,
-  Dialogs, StdCtrls, DBCtrls, DBGrids, Menus, IniFiles;
+  Dialogs, StdCtrls, DBCtrls, DBGrids, Menus, IniFiles, utable;
 
 type
 
@@ -25,6 +25,7 @@ type
     menu_language: TMenuItem;
     menu_close: TMenuItem;
     menu_export: TMenuItem;
+    procedure bt_tabelle_anzeigenClick(Sender: TObject);
     procedure FormActivate(Sender: TObject);
     procedure FormCreate(Sender: TObject);
     procedure FormDestroy(Sender: TObject);
@@ -53,6 +54,12 @@ begin
   FormatGUI;
   ConnectDatabase;
   TabelSelection;
+end;
+
+procedure Tfm_tournament.bt_tabelle_anzeigenClick(Sender: TObject);
+begin
+  fm_tournament.close;
+  fm_table_view.show;
 end;
 
 procedure Tfm_tournament.FormCreate(Sender: TObject);
@@ -118,15 +125,15 @@ procedure Tfm_tournament.FormatGUI;
 begin
   //Legt die Formatierungen für alle GUI-Elemente fest
 
-  fm_tournament.Caption:=language.ReadString('GUI','fm_turnierauswertung','');
+  fm_tournament.Caption:=language.ReadString('GUI','fm_tournament','');
   Label1.Caption:=language.ReadString('GUI','Label1','');;
-  bt_tabelle_anzeigen.Caption:=language.ReadString('GUI','bt_tabelle_anzeigen','');;
+  bt_tabelle_anzeigen.Caption:=language.ReadString('GUI','bt_tabelle_anzeigen','');
   dbcb_tabellen.ReadOnly:=true;
   dbcb_tabellen.Sorted:=true;
-  menu_option.Caption:=language.ReadString('GUI','menu_option','');;
-  menu_language.Caption:=language.ReadString('GUI','menu_language','');;
-  menu_export.Caption:=language.ReadString('GUI','menu_export','');;
-  menu_close.Caption:=language.ReadString('GUI','menu_close','');;
+  menu_option.Caption:=language.ReadString('GUI','menu_option','');
+  menu_language.Caption:=language.ReadString('GUI','menu_language','');
+  menu_export.Caption:=language.ReadString('GUI','menu_export','');
+  menu_close.Caption:=language.ReadString('GUI','menu_close','');
 end;
 
 procedure Tfm_tournament.TabelSelection;

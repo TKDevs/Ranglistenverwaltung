@@ -4,5 +4,25 @@ object fm_table_view: Tfm_table_view
   Top = 145
   Width = 320
   Caption = 'fm_table_view'
-  LCLVersion = '2.0.2.0'
+  Menu = menu_main
+  OnActivate = FormActivate
+  OnCreate = FormCreate
+  OnDestroy = FormDestroy
+  LCLVersion = '2.0.6.0'
+  object menu_main: TMainMenu
+    left = 280
+    top = 8
+    object menu_option: TMenuItem
+      Caption = 'menu_option'
+      object menu_language: TMenuItem
+        Caption = 'menu_language'
+      end
+      object menu_back: TMenuItem
+        Caption = 'menu_back'
+      end
+      object menu_close: TMenuItem
+        Caption = 'menu_close'
+      end
+    end
+  end
 end

@@ -59,6 +59,7 @@ end;
 procedure Tfm_table_view.menu_closeClick(Sender: TObject);
 begin
   fm_table_view.close;
+  fm_tournament.close;
 end;
 
 procedure Tfm_table_view.FormatGUI;
@@ -66,8 +67,8 @@ begin
   //Legt die Formatierungen für alle GUI-Elemente fest
 
   fm_table_view.Caption:=fm_tournament.language.ReadString('GUI','fm_table_view','');
-  menu_language.Caption:=fm_tournament.language.ReadString('GUI','menu_option','');
-  menu_option.Caption:=fm_tournament.language.ReadString('GUI','menu_language','');
+  menu_language.Caption:=fm_tournament.language.ReadString('GUI','menu_language','');
+  menu_option.Caption:=fm_tournament.language.ReadString('GUI','menu_option','');
   menu_back.Caption:=fm_tournament.language.ReadString('GUI','menu_back','');
   menu_close.Caption:=fm_tournament.language.ReadString('GUI','menu_close',''); 
   menu_export.Caption:=fm_tournament.language.ReadString('GUI','menu_export','');

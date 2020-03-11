@@ -1,7 +1,7 @@
 object fm_tournament: Tfm_tournament
-  Left = 660
+  Left = 414
   Height = 93
-  Top = 184
+  Top = 506
   Width = 377
   Caption = 'fm_tournament'
   ClientHeight = 73
@@ -11,7 +11,7 @@ object fm_tournament: Tfm_tournament
   OnCreate = FormCreate
   OnDestroy = FormDestroy
   LCLVersion = '2.0.2.0'
-  object dbcb_tabellen: TDBComboBox
+  object dbcb_table: TDBComboBox
     Left = 128
     Height = 23
     Top = 8
@@ -28,13 +28,13 @@ object fm_tournament: Tfm_tournament
     Caption = 'Label1'
     ParentColor = False
   end
-  object bt_tabelle_anzeigen: TButton
+  object bt_show_table: TButton
     Left = 184
     Height = 25
     Top = 40
     Width = 148
-    Caption = 'bt_tabelle_anzeigen'
-    OnClick = bt_tabelle_anzeigenClick
+    Caption = 'bt_show_table'
+    OnClick = bt_show_tableClick
     TabOrder = 1
   end
   object db_connector: TODBCConnection
@@ -49,13 +49,13 @@ object fm_tournament: Tfm_tournament
     left = 80
     top = 88
   end
-  object db_start_query: TSQLQuery
+  object db_query_start: TSQLQuery
     FieldDefs = <>
     Params = <>
     left = 128
     top = 88
   end
-  object db_start_source: TDataSource
+  object db_source_start: TDataSource
     left = 184
     top = 88
   end

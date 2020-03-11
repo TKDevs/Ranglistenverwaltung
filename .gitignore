@@ -1,6 +1,7 @@
 # Directories
 backup/
 lib/
+bin/
 
 # Files
 *.exe

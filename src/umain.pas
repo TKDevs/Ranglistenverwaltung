@@ -13,19 +13,19 @@ type
   { Tfm_tournament }
 
   Tfm_tournament = class(TForm)
-    bt_tabelle_anzeigen: TButton;
-    dbcb_tabellen: TDBComboBox;
-    db_start_source: TDataSource;
+    bt_show_table: TButton;
+    dbcb_table: TDBComboBox;
+    db_source_start: TDataSource;
     db_connector: TODBCConnection;
     db_transaction: TSQLTransaction;
-    db_start_query: TSQLQuery;
+    db_query_start: TSQLQuery;
     Label1: TLabel;
     menu_main: TMainMenu;
     menu_option: TMenuItem;
     menu_language: TMenuItem;
     menu_close: TMenuItem;
     menu_export: TMenuItem;
-    procedure bt_tabelle_anzeigenClick(Sender: TObject);
+    procedure bt_show_tableClick(Sender: TObject);
     procedure FormActivate(Sender: TObject);
     procedure FormCreate(Sender: TObject);
     procedure FormDestroy(Sender: TObject);
@@ -57,7 +57,7 @@ begin
   TabelSelection;
 end;
 
-procedure Tfm_tournament.bt_tabelle_anzeigenClick(Sender: TObject);
+procedure Tfm_tournament.bt_show_tableClick(Sender: TObject);
 begin
   fm_table_view.show; 
   fm_tournament.Hide;
@@ -100,11 +100,11 @@ begin
   db_transaction.Active:=true;
 
   //Query
-  db_start_query.Transaction:=db_transaction;
-  db_start_query.DataBase:=db_connector;
+  db_query_start.Transaction:=db_transaction;
+  db_query_start.DataBase:=db_connector;
 
   //Datasource
-  db_start_source.DataSet:=db_start_query;
+  db_source_start.DataSet:=db_query_start;
 end;
 
 procedure Tfm_tournament.CheckLanguageFile;
@@ -128,9 +128,9 @@ begin
 
   fm_tournament.Caption:=language.ReadString('GUI','fm_tournament','');
   Label1.Caption:=language.ReadString('GUI','Label1','');;
-  bt_tabelle_anzeigen.Caption:=language.ReadString('GUI','bt_tabelle_anzeigen','');
-  dbcb_tabellen.ReadOnly:=true;
-  dbcb_tabellen.Sorted:=true;
+  bt_show_table.Caption:=language.ReadString('GUI','bt_show_table','');
+  dbcb_table.ReadOnly:=true;
+  dbcb_table.Sorted:=true;
   menu_option.Caption:=language.ReadString('GUI','menu_option','');
   menu_language.Caption:=language.ReadString('GUI','menu_language','');
   menu_export.Caption:=language.ReadString('GUI','menu_export','');
@@ -144,10 +144,10 @@ begin
 
   query:='SHOW TABLES';
 
-  db_start_query.SQL.AddStrings(query, true);
-  db_start_query.Active:=true;
-  dbcb_tabellen.DataSource:=db_start_source;
-  dbcb_tabellen.DataField:='Tables_in_tunierauswertung';
+  db_query_start.SQL.AddStrings(query, true);
+  db_query_start.Active:=true;
+  dbcb_table.DataSource:=db_source_start;
+  dbcb_table.DataField:='Tables_in_tunierauswertung';
 end;
 
 end.

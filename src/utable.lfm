@@ -1,16 +1,28 @@
 object fm_table_view: Tfm_table_view
   Left = 560
-  Height = 240
+  Height = 489
   Top = 175
-  Width = 320
+  Width = 538
   Caption = 'fm_table_view'
+  ClientHeight = 469
+  ClientWidth = 538
   Menu = menu_main
   OnActivate = FormActivate
+  OnClose = FormClose
   OnCreate = FormCreate
   LCLVersion = '2.0.2.0'
+  object dbgrid: TDBGrid
+    Left = 258
+    Height = 469
+    Top = 0
+    Width = 280
+    Color = clWindow
+    Columns = <>
+    DataSource = db_source_list
+    TabOrder = 0
+  end
   object menu_main: TMainMenu
-    left = 280
-    top = 8
+    left = 16
     object menu_option: TMenuItem
       Caption = 'menu_option'
       object menu_language: TMenuItem
@@ -36,5 +48,16 @@ object fm_table_view: Tfm_table_view
         OnClick = menu_closeClick
       end
     end
+  end
+  object db_source_list: TDataSource
+    DataSet = db_query_list
+    left = 117
+    top = 17
+  end
+  object db_query_list: TSQLQuery
+    FieldDefs = <>
+    Params = <>
+    left = 181
+    top = 29
   end
 end

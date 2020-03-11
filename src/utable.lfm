@@ -15,6 +15,14 @@ object fm_table_view: Tfm_table_view
       Caption = 'menu_option'
       object menu_language: TMenuItem
         Caption = 'menu_language'
+        object menu_german: TMenuItem
+          Caption = 'menu_german'
+          OnClick = menu_germanClick
+        end
+        object menu_english: TMenuItem
+          Caption = 'menu_english'
+          OnClick = menu_englishClick
+        end
       end
       object menu_export: TMenuItem
         Caption = 'menu_export'

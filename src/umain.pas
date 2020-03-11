@@ -20,6 +20,8 @@ type
     db_transaction: TSQLTransaction;
     db_query_start: TSQLQuery;
     Label1: TLabel;
+    menu_german: TMenuItem;
+    menu_english: TMenuItem;
     menu_main: TMainMenu;
     menu_option: TMenuItem;
     menu_language: TMenuItem;
@@ -30,13 +32,15 @@ type
     procedure FormCreate(Sender: TObject);
     procedure FormDestroy(Sender: TObject);
     procedure menu_closeClick(Sender: TObject);
+    procedure menu_englishClick(Sender: TObject);
+    procedure menu_germanClick(Sender: TObject);
   private
     procedure ConnectDatabase;
     procedure FormatGUI;
-    procedure TabelSelection;   
-    procedure CheckLanguageFile;
+    procedure TabelSelection;
   public
   	language: TIniFile;
+    procedure AssignLanguageFile(filename:string);
   end;
 
 var
@@ -65,9 +69,13 @@ end;
 
 procedure Tfm_tournament.FormCreate(Sender: TObject);
 begin
+  //Formatierungen der Form
   fm_tournament.Top:=50;
   fm_tournament.Left:=50;
-  CheckLanguageFile;
+  fm_tournament.Width:=354;
+  fm_tournament.Height:=93;
+
+  AssignLanguageFile('deutsch.ini');
 end;
 
 procedure Tfm_tournament.FormDestroy(Sender: TObject);
@@ -78,6 +86,18 @@ end;
 procedure Tfm_tournament.menu_closeClick(Sender: TObject);
 begin
   fm_tournament.Close;
+end;
+
+procedure Tfm_tournament.menu_englishClick(Sender: TObject);
+begin
+  AssignLanguageFile('englisch.ini');
+  FormatGUI;
+end;
+
+procedure Tfm_tournament.menu_germanClick(Sender: TObject);
+begin
+  AssignLanguageFile('deutsch.ini'); 
+  FormatGUI;
 end;
 
 procedure Tfm_tournament.ConnectDatabase;
@@ -107,12 +127,14 @@ begin
   db_source_start.DataSet:=db_query_start;
 end;
 
-procedure Tfm_tournament.CheckLanguageFile;
+procedure Tfm_tournament.AssignLanguageFile(filename:string);
 begin
   //Überprüft ob die Sprachdateien vorhanden sind
 
-  if(FileExists('deutsch.ini')) then
-  	language := TIniFile.Create('deutsch.ini') //Stellt die Vebrindung zur Inifile her
+  language.Free;
+
+  if(FileExists(filename)) then
+  	language := TIniFile.Create(filename) //Stellt die Vebindung zur Inifile her
   else
   begin
     ShowMessage('Sprachdateien wurden nicht gefunden!'+ #10#13 +
@@ -135,6 +157,8 @@ begin
   menu_language.Caption:=language.ReadString('GUI','menu_language','');
   menu_export.Caption:=language.ReadString('GUI','menu_export','');
   menu_close.Caption:=language.ReadString('GUI','menu_close','');
+  menu_german.Caption:=language.ReadString('GUI','menu_german','');
+  menu_english.Caption:=language.ReadString('GUI','menu_english','');
 end;
 
 procedure Tfm_tournament.TabelSelection;

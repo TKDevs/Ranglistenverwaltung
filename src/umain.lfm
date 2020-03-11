@@ -1,11 +1,11 @@
 object fm_tournament: Tfm_tournament
   Left = 414
-  Height = 93
+  Height = 226
   Top = 506
-  Width = 377
+  Width = 580
   Caption = 'fm_tournament'
-  ClientHeight = 73
-  ClientWidth = 377
+  ClientHeight = 206
+  ClientWidth = 580
   Menu = menu_main
   OnActivate = FormActivate
   OnCreate = FormCreate
@@ -60,12 +60,20 @@ object fm_tournament: Tfm_tournament
     top = 88
   end
   object menu_main: TMainMenu
-    left = 248
-    top = 88
+    left = 344
+    top = 8
     object menu_option: TMenuItem
       Caption = 'menu_option'
       object menu_language: TMenuItem
         Caption = 'menu_language'
+        object menu_german: TMenuItem
+          Caption = 'menu_german'
+          OnClick = menu_germanClick
+        end
+        object menu_english: TMenuItem
+          Caption = 'menu_english'
+          OnClick = menu_englishClick
+        end
       end
       object menu_export: TMenuItem
         Caption = 'menu_export'

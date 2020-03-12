@@ -42,6 +42,11 @@
               </Win32>
             </Options>
           </Linking>
+          <Other>
+            <ExecuteBefore>
+              <Command Value="GeneratingTranslationfiles.bat"/>
+            </ExecuteBefore>
+          </Other>
         </CompilerOptions>
       </Item2>
     </BuildModes>

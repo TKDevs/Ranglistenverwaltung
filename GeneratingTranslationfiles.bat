@@ -7,4 +7,3 @@ ECHO generating english
 COPY %~dp0Sprache\englisch.ini %~dp0bin\Debug\
 COPY %~dp0Sprache\englisch.ini %~dp0bin\Release\
 ECHO finished generating
-pause

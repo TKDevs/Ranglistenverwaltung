@@ -39,8 +39,9 @@ type
     procedure FormatGUI;
     procedure TabelSelection;
   public
-  	language: TIniFile;
+    language: TIniFile;
     procedure AssignLanguageFile(filename:string);
+    procedure SqlQuery(satement:AnsiString; var sql_query:TSQLQuery);
   end;
 
 var
@@ -144,6 +145,15 @@ begin
   end;
 end;
 
+procedure Tfm_tournament.SqlQuery(satement: AnsiString; var sql_query: TSQLQuery
+  );
+begin
+  //Erleichtert das Ändern einer SQL Abfrage einer TSQLQuery Komponente
+  sql_query.Active:=false;
+  sql_query.SQL.AddStrings(satement, true);
+  sql_query.Active:=true;
+end;
+
 procedure Tfm_tournament.FormatGUI;
 begin
   //Legt die Formatierungen für alle GUI-Elemente fest
@@ -162,14 +172,9 @@ begin
 end;
 
 procedure Tfm_tournament.TabelSelection;
-var query:AnsiString;
 begin
   //Lässt alle Tabellen der Datenbank in der combobox anzeigen
-
-  query:='SHOW TABLES';
-
-  db_query_start.SQL.AddStrings(query, true);
-  db_query_start.Active:=true;
+  SqlQuery('SHOW TABLES;', db_query_start);
   dblcb_tables.ListSource:=db_source_start;
   dblcb_tables.KeyField:='Tables_in_tunierauswertung';
 end;

@@ -66,7 +66,7 @@ end;
 
 procedure Tfm_table_view.FormCreate(Sender: TObject);
 begin
-  //Formatierung der
+  //Formatierung der Form
   fm_table_view.Top:=50;
   fm_table_view.Left:=50;
   fm_table_view.dbgrid.Align:=alRight;
@@ -121,14 +121,9 @@ begin
 end;
 
 procedure Tfm_table_view.ListSelection;
-var query:AnsiString;
 begin
   //Lässt alle Tabellen der Datenbank in der combobox anzeigen
-
-  query:='SELECT * FROM basketballrangliste;';
-
-  db_query_list.SQL.AddStrings(query, true);
-  db_query_list.Active:=true;
+  fm_tournament.SqlQuery('SELECT * FROM ' + fm_tournament.dblcb_tables.Items[fm_tournament.dblcb_tables.ItemIndex] + ';', db_query_list);
   dbgrid.DataSource:=db_source_list;
 end;
 

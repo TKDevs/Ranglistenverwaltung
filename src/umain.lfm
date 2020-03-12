@@ -1,7 +1,7 @@
 object fm_tournament: Tfm_tournament
-  Left = 414
+  Left = 1247
   Height = 226
-  Top = 506
+  Top = 338
   Width = 580
   Caption = 'fm_tournament'
   ClientHeight = 206
@@ -10,16 +10,7 @@ object fm_tournament: Tfm_tournament
   OnActivate = FormActivate
   OnCreate = FormCreate
   OnDestroy = FormDestroy
-  LCLVersion = '2.0.2.0'
-  object dbcb_table: TDBComboBox
-    Left = 128
-    Height = 23
-    Top = 8
-    Width = 204
-    ItemHeight = 15
-    MaxLength = 0
-    TabOrder = 0
-  end
+  LCLVersion = '2.0.4.0'
   object Label1: TLabel
     Left = 8
     Height = 15
@@ -35,6 +26,15 @@ object fm_tournament: Tfm_tournament
     Width = 148
     Caption = 'bt_show_table'
     OnClick = bt_show_tableClick
+    TabOrder = 0
+  end
+  object dblcb_tables: TDBLookupComboBox
+    Left = 128
+    Height = 23
+    Top = 8
+    Width = 204
+    ListFieldIndex = 0
+    LookupCache = False
     TabOrder = 1
   end
   object db_connector: TODBCConnection

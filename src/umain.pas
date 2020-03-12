@@ -14,7 +14,7 @@ type
 
   Tfm_tournament = class(TForm)
     bt_show_table: TButton;
-    dbcb_table: TDBComboBox;
+    dblcb_tables: TDBLookupComboBox;
     db_source_start: TDataSource;
     db_connector: TODBCConnection;
     db_transaction: TSQLTransaction;
@@ -151,8 +151,8 @@ begin
   fm_tournament.Caption:=language.ReadString('GUI','fm_tournament','');
   Label1.Caption:=language.ReadString('GUI','Label1','');;
   bt_show_table.Caption:=language.ReadString('GUI','bt_show_table','');
-  dbcb_table.ReadOnly:=true;
-  dbcb_table.Sorted:=true;
+  dblcb_tables.ReadOnly:=true;
+  dblcb_tables.Sorted:=true;
   menu_option.Caption:=language.ReadString('GUI','menu_option','');
   menu_language.Caption:=language.ReadString('GUI','menu_language','');
   menu_export.Caption:=language.ReadString('GUI','menu_export','');
@@ -170,8 +170,8 @@ begin
 
   db_query_start.SQL.AddStrings(query, true);
   db_query_start.Active:=true;
-  dbcb_table.DataSource:=db_source_start;
-  dbcb_table.DataField:='Tables_in_tunierauswertung';
+  dblcb_tables.ListSource:=db_source_start;
+  dblcb_tables.KeyField:='Tables_in_tunierauswertung';
 end;
 
 end.

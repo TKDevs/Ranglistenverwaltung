@@ -1,25 +1,62 @@
 object fm_table_view: Tfm_table_view
-  Left = 560
-  Height = 489
-  Top = 175
-  Width = 538
+  Left = 967
+  Height = 595
+  Top = 385
+  Width = 896
   Caption = 'fm_table_view'
-  ClientHeight = 469
-  ClientWidth = 538
+  ClientHeight = 575
+  ClientWidth = 896
   Menu = menu_main
   OnActivate = FormActivate
   OnClose = FormClose
   OnCreate = FormCreate
-  LCLVersion = '2.0.4.0'
+  LCLVersion = '2.0.2.0'
   object dbgrid: TDBGrid
-    Left = 258
+    Left = 8
     Height = 469
-    Top = 0
-    Width = 280
+    Top = 8
+    Width = 500
     Color = clWindow
     Columns = <>
-    DataSource = db_source_list
+    DataSource = db_source_table
     TabOrder = 0
+    OnColumnSized = dbgridColumnSized
+  end
+  object gb_team: TGroupBox
+    Left = 528
+    Height = 72
+    Top = 8
+    Width = 345
+    Caption = 'gb_team'
+    ClientHeight = 52
+    ClientWidth = 341
+    TabOrder = 1
+    object lb_vs: TLabel
+      Left = 160
+      Height = 15
+      Top = 16
+      Width = 26
+      Caption = 'lb_vs'
+      ParentColor = False
+    end
+    object dblcb_team1: TDBLookupComboBox
+      Left = 8
+      Height = 23
+      Top = 8
+      Width = 136
+      ListFieldIndex = 0
+      LookupCache = False
+      TabOrder = 0
+    end
+    object dblcb_team2: TDBLookupComboBox
+      Left = 200
+      Height = 23
+      Top = 8
+      Width = 136
+      ListFieldIndex = 0
+      LookupCache = False
+      TabOrder = 1
+    end
   end
   object menu_main: TMainMenu
     left = 16
@@ -49,15 +86,23 @@ object fm_table_view: Tfm_table_view
       end
     end
   end
-  object db_source_list: TDataSource
-    DataSet = db_query_list
-    left = 117
-    top = 17
+  object db_source_table: TDataSource
+    DataSet = db_query_table
+    left = 64
   end
-  object db_query_list: TSQLQuery
+  object db_query_table: TSQLQuery
     FieldDefs = <>
     Params = <>
-    left = 181
-    top = 29
+    left = 112
+  end
+  object db_source_teams: TDataSource
+    left = 112
+    top = 48
+  end
+  object db_query_teams: TSQLQuery
+    FieldDefs = <>
+    Params = <>
+    left = 64
+    top = 40
   end
 end

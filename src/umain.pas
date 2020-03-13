@@ -19,7 +19,7 @@ type
     db_connector: TODBCConnection;
     db_transaction: TSQLTransaction;
     db_query_start: TSQLQuery;
-    Label1: TLabel;
+    lb_table: TLabel;
     menu_german: TMenuItem;
     menu_english: TMenuItem;
     menu_main: TMainMenu;
@@ -28,6 +28,8 @@ type
     menu_close: TMenuItem;
     menu_export: TMenuItem;
     procedure bt_show_tableClick(Sender: TObject);
+    procedure dblcb_tablesKeyDown(Sender: TObject; var Key: Word;
+      Shift: TShiftState);
     procedure FormActivate(Sender: TObject);
     procedure FormCreate(Sender: TObject);
     procedure FormDestroy(Sender: TObject);
@@ -57,15 +59,21 @@ uses utable;
 
 procedure Tfm_tournament.FormActivate(Sender: TObject);
 begin
-  FormatGUI;
   ConnectDatabase;
   TabelSelection;
+  FormatGUI;
 end;
 
 procedure Tfm_tournament.bt_show_tableClick(Sender: TObject);
 begin
   fm_table_view.show; 
   fm_tournament.Hide;
+end;
+
+procedure Tfm_tournament.dblcb_tablesKeyDown(Sender: TObject; var Key: Word;
+  Shift: TShiftState);
+begin
+  Key:=0;
 end;
 
 procedure Tfm_tournament.FormCreate(Sender: TObject);
@@ -159,16 +167,17 @@ begin
   //Legt die Formatierungen für alle GUI-Elemente fest
 
   fm_tournament.Caption:=language.ReadString('GUI','fm_tournament','');
-  Label1.Caption:=language.ReadString('GUI','Label1','');;
+  lb_table.Caption:=language.ReadString('GUI','lb_table','');;
   bt_show_table.Caption:=language.ReadString('GUI','bt_show_table','');
-  dblcb_tables.ReadOnly:=true;
-  dblcb_tables.Sorted:=true;
   menu_option.Caption:=language.ReadString('GUI','menu_option','');
   menu_language.Caption:=language.ReadString('GUI','menu_language','');
   menu_export.Caption:=language.ReadString('GUI','menu_export','');
   menu_close.Caption:=language.ReadString('GUI','menu_close','');
   menu_german.Caption:=language.ReadString('GUI','menu_german','');
   menu_english.Caption:=language.ReadString('GUI','menu_english','');
+  dblcb_tables.ItemIndex:=0; 
+  dblcb_tables.AutoSelect:=false;
+  dblcb_tables.Sorted:=true;
 end;
 
 procedure Tfm_tournament.TabelSelection;

@@ -1,7 +1,7 @@
 object fm_tournament: Tfm_tournament
-  Left = 1247
+  Left = 1306
   Height = 226
-  Top = 338
+  Top = 234
   Width = 580
   Caption = 'fm_tournament'
   ClientHeight = 206
@@ -10,13 +10,13 @@ object fm_tournament: Tfm_tournament
   OnActivate = FormActivate
   OnCreate = FormCreate
   OnDestroy = FormDestroy
-  LCLVersion = '2.0.4.0'
-  object Label1: TLabel
+  LCLVersion = '2.0.2.0'
+  object lb_table: TLabel
     Left = 8
     Height = 15
     Top = 16
-    Width = 34
-    Caption = 'Label1'
+    Width = 41
+    Caption = 'lb_table'
     ParentColor = False
   end
   object bt_show_table: TButton
@@ -35,6 +35,7 @@ object fm_tournament: Tfm_tournament
     Width = 204
     ListFieldIndex = 0
     LookupCache = False
+    OnKeyDown = dblcb_tablesKeyDown
     TabOrder = 1
   end
   object db_connector: TODBCConnection

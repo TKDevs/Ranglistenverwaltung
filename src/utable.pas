@@ -6,16 +6,21 @@ interface
 
 uses
   Classes, SysUtils, Forms, Controls, Graphics, Dialogs, Menus, DBGrids,
-  IniFiles, db, sqldb, FileUtil;
+  DBCtrls, StdCtrls, IniFiles, db, sqldb, FileUtil;
 
 type
 
   { Tfm_table_view }
 
   Tfm_table_view = class(TForm)
+    db_source_teams: TDataSource;
+    dblcb_team1: TDBLookupComboBox;
+    dblcb_team2: TDBLookupComboBox;
+    gb_team: TGroupBox;
+    lb_vs: TLabel;
     menu_german: TMenuItem;
     menu_english: TMenuItem;
-    db_source_list: TDataSource;
+    db_source_table: TDataSource;
     dbgrid: TDBGrid;
     menu_export: TMenuItem;
     menu_option: TMenuItem;
@@ -23,7 +28,9 @@ type
     menu_language: TMenuItem;
     menu_back: TMenuItem;
     menu_main: TMainMenu;
-    db_query_list: TSQLQuery;
+    db_query_table: TSQLQuery;
+    db_query_teams: TSQLQuery;
+    procedure dbgridColumnSized(Sender: TObject);
     procedure FormActivate(Sender: TObject);
     procedure FormClose(Sender: TObject; var CloseAction: TCloseAction);
     procedure FormCreate(Sender: TObject);
@@ -34,8 +41,9 @@ type
   private
     procedure FormatGUI;
     procedure ConnectDatabaseToGrid;
-    procedure ListSelection;
+    procedure TableSelection;
     procedure ConnectDatabase;
+    procedure TeamSelection;
   public
   end;
 
@@ -52,10 +60,19 @@ uses umain;
 
 procedure Tfm_table_view.FormActivate(Sender: TObject);
 begin
-  FormatGUI;
   ConnectDatabase;
   ConnectDatabaseToGrid;
-  ListSelection;
+  TableSelection;
+  TeamSelection;
+  FormatGUI;
+end;
+
+procedure Tfm_table_view.dbgridColumnSized(Sender: TObject);
+var i:integer;
+begin
+  {dbgrid.Columns[0].Width:=100;
+  for i:=1 to dbgrid.Columns.Count-1 do
+  dbgrid.Columns[i].Width:=70;}
 end;
 
 procedure Tfm_table_view.FormClose(Sender: TObject;
@@ -69,8 +86,8 @@ begin
   //Formatierung der Form
   fm_table_view.Top:=50;
   fm_table_view.Left:=50;
-  fm_table_view.dbgrid.Align:=alRight;
-  fm_table_view.dbgrid.Anchors:=[akTop,akLeft,akRight,akBottom];
+  fm_table_view.dbgrid.Align:=alLeft;
+  fm_table_view.dbgrid.Anchors:=[akTop,akLeft];
 end;
 
 procedure Tfm_table_view.menu_backClick(Sender: TObject);
@@ -98,6 +115,7 @@ begin
 end;
 
 procedure Tfm_table_view.FormatGUI;
+var i:integer;
 begin
   //Legt die Formatierungen für alle GUI-Elemente fest
 
@@ -109,32 +127,49 @@ begin
   menu_export.Caption:=fm_tournament.language.ReadString('GUI','menu_export','');
   menu_german.Caption:=fm_tournament.language.ReadString('GUI','menu_german','');
   menu_english.Caption:=fm_tournament.language.ReadString('GUI','menu_english','');
-
+  lb_vs.Caption:=fm_tournament.language.ReadString('GUI', 'lb_vs','');
+  gb_team.Caption:=fm_tournament.language.ReadString('GUI','gb_team','');
+  dbgrid.ReadOnly:=true;
+ {dbgrid.Columns[0].Width:=100;
+  for i:=1 to dbgrid.Columns.Count-1 do
+  dbgrid.Columns[i].Width:=70;}
+  dbgrid.Width:=500;
   dbgrid.AutoFillColumns:=true;
-end;
+  dblcb_team1.ListSource:=db_source_teams;
+  dblcb_team1.KeyField:='Teamname';   
+  dblcb_team2.ListSource:=db_source_teams;
+  dblcb_team2.KeyField:='Teamname';
+  end;
 
 procedure Tfm_table_view.ConnectDatabaseToGrid;
 begin
-
-  dbgrid.DataSource:=fm_table_view.db_source_list;
-
+  dbgrid.DataSource:=fm_table_view.db_source_table;
 end;
 
-procedure Tfm_table_view.ListSelection;
+procedure Tfm_table_view.TableSelection;
 begin
   //Lässt alle Tabellen der Datenbank in der combobox anzeigen
-  fm_tournament.SqlQuery('SELECT * FROM ' + fm_tournament.dblcb_tables.Items[fm_tournament.dblcb_tables.ItemIndex] + ';', db_query_list);
-  dbgrid.DataSource:=db_source_list;
+  fm_tournament.SqlQuery('SELECT * FROM ' + fm_tournament.dblcb_tables.Items[fm_tournament.dblcb_tables.ItemIndex] + ';', db_query_table);
+  dbgrid.DataSource:=db_source_table;
 end;
 
 procedure Tfm_table_view.ConnectDatabase;
 begin
   //Query
-  db_query_list.Transaction:=fm_tournament.db_transaction;
-  db_query_list.DataBase:=fm_tournament.db_connector;
+  db_query_table.Transaction:=fm_tournament.db_transaction;
+  db_query_table.DataBase:=fm_tournament.db_connector;
+  db_query_teams.Transaction:=fm_tournament.db_transaction;
+  db_query_teams.DataBase:=fm_tournament.db_connector;
 
   //Datasource
-  db_source_list.DataSet:=db_query_list;
+  db_source_table.DataSet:=db_query_table;
+  db_source_teams.DataSet:=db_query_teams;
 end;
+
+procedure Tfm_table_view.TeamSelection;
+begin
+  fm_tournament.SqlQuery('SELECT Teamname FROM ' + fm_tournament.dblcb_tables.Items[fm_tournament.dblcb_tables.ItemIndex] + ';', db_query_teams);
+end;
+
 end.
 

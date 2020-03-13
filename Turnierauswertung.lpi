@@ -126,6 +126,11 @@
         </Win32>
       </Options>
     </Linking>
+    <Other>
+      <ExecuteBefore>
+        <Command Value="C:\dev\Turnierauswertung\GeneratingTranslationfiles.bat"/>
+      </ExecuteBefore>
+    </Other>
   </CompilerOptions>
   <Debugging>
     <Exceptions Count="3">

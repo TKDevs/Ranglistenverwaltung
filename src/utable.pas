@@ -68,7 +68,7 @@ begin
 end;
 
 procedure Tfm_table_view.dbgridColumnSized(Sender: TObject);
-var i:integer;
+//var i:integer;
 begin
   {dbgrid.Columns[0].Width:=100;
   for i:=1 to dbgrid.Columns.Count-1 do
@@ -115,10 +115,10 @@ begin
 end;
 
 procedure Tfm_table_view.FormatGUI;
-var i:integer;
+//var i:integer;
 begin
   //Legt die Formatierungen für alle GUI-Elemente fest
-
+  //Spracheinstellungen
   fm_table_view.Caption:=fm_tournament.language.ReadString('GUI','fm_table_view','');
   menu_language.Caption:=fm_tournament.language.ReadString('GUI','menu_language','');
   menu_option.Caption:=fm_tournament.language.ReadString('GUI','menu_option','');
@@ -129,12 +129,15 @@ begin
   menu_english.Caption:=fm_tournament.language.ReadString('GUI','menu_english','');
   lb_vs.Caption:=fm_tournament.language.ReadString('GUI', 'lb_vs','');
   gb_team.Caption:=fm_tournament.language.ReadString('GUI','gb_team','');
+
+  //Objektdarstellung
   dbgrid.ReadOnly:=true;
  {dbgrid.Columns[0].Width:=100;
   for i:=1 to dbgrid.Columns.Count-1 do
   dbgrid.Columns[i].Width:=70;}
   dbgrid.Width:=500;
   dbgrid.AutoFillColumns:=true;
+  dbgrid.ScrollBars:=ssNone;
   dblcb_team1.ListSource:=db_source_teams;
   dblcb_team1.KeyField:='Teamname';   
   dblcb_team2.ListSource:=db_source_teams;

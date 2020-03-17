@@ -16,7 +16,10 @@ type
     db_source_teams: TDataSource;
     dblcb_team1: TDBLookupComboBox;
     dblcb_team2: TDBLookupComboBox;
+    ed_points_team1: TEdit;
+    ed_points_team2: TEdit;
     gb_team: TGroupBox;
+    gb_points: TGroupBox;
     lb_vs: TLabel;
     menu_german: TMenuItem;
     menu_english: TMenuItem;
@@ -129,9 +132,12 @@ begin
   menu_english.Caption:=fm_tournament.language.ReadString('GUI','menu_english','');
   lb_vs.Caption:=fm_tournament.language.ReadString('GUI', 'lb_vs','');
   gb_team.Caption:=fm_tournament.language.ReadString('GUI','gb_team','');
+  gb_points.Caption:=fm_tournament.language.ReadString('GUI','gb_points','');
 
   //Objektdarstellung
-  dbgrid.ReadOnly:=true;
+  dbgrid.FastEditing:=false;
+  dbgrid.Enabled:=false;
+
  {dbgrid.Columns[0].Width:=100;
   for i:=1 to dbgrid.Columns.Count-1 do
   dbgrid.Columns[i].Width:=70;}
@@ -142,6 +148,8 @@ begin
   dblcb_team1.KeyField:='Teamname';   
   dblcb_team2.ListSource:=db_source_teams;
   dblcb_team2.KeyField:='Teamname';
+  ed_points_team1.text:='';
+  ed_points_team2.text:='';
   end;
 
 procedure Tfm_table_view.ConnectDatabaseToGrid;

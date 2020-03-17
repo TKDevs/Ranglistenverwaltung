@@ -58,6 +58,30 @@ object fm_table_view: Tfm_table_view
       TabOrder = 1
     end
   end
+  object gb_points: TGroupBox
+    Left = 528
+    Height = 72
+    Top = 88
+    Width = 345
+    Caption = 'gb_points'
+    ClientHeight = 52
+    ClientWidth = 341
+    TabOrder = 2
+    object ed_points_team1: TEdit
+      Left = 8
+      Height = 23
+      Top = 8
+      Width = 136
+      TabOrder = 0
+    end
+    object ed_points_team2: TEdit
+      Left = 200
+      Height = 23
+      Top = 8
+      Width = 136
+      TabOrder = 1
+    end
+  end
   object menu_main: TMainMenu
     left = 16
     object menu_option: TMenuItem

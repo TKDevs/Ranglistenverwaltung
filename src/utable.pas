@@ -6,7 +6,7 @@ interface
 
 uses
   Classes, SysUtils, Forms, Controls, Graphics, Dialogs, Menus, DBGrids,
-  DBCtrls, StdCtrls, IniFiles, db, sqldb, FileUtil;
+  DBCtrls, StdCtrls, ComCtrls, IniFiles, db, sqldb, FileUtil;
 
 type
 
@@ -16,10 +16,12 @@ type
     db_source_teams: TDataSource;
     dblcb_team1: TDBLookupComboBox;
     dblcb_team2: TDBLookupComboBox;
+    ed_search: TEdit;
     ed_points_team1: TEdit;
     ed_points_team2: TEdit;
     gb_team: TGroupBox;
     gb_points: TGroupBox;
+    lb_search: TLabel;
     lb_vs: TLabel;
     menu_german: TMenuItem;
     menu_english: TMenuItem;
@@ -33,7 +35,9 @@ type
     menu_main: TMainMenu;
     db_query_table: TSQLQuery;
     db_query_teams: TSQLQuery;
-    procedure dbgridColumnSized(Sender: TObject);
+    pc_controlles: TPageControl;
+    tab1: TTabSheet;
+    tab2: TTabSheet;
     procedure FormActivate(Sender: TObject);
     procedure FormClose(Sender: TObject; var CloseAction: TCloseAction);
     procedure FormCreate(Sender: TObject);
@@ -70,14 +74,6 @@ begin
   FormatGUI;
 end;
 
-procedure Tfm_table_view.dbgridColumnSized(Sender: TObject);
-//var i:integer;
-begin
-  {dbgrid.Columns[0].Width:=100;
-  for i:=1 to dbgrid.Columns.Count-1 do
-  dbgrid.Columns[i].Width:=70;}
-end;
-
 procedure Tfm_table_view.FormClose(Sender: TObject;
   var CloseAction: TCloseAction);
 begin
@@ -89,8 +85,10 @@ begin
   //Formatierung der Form
   fm_table_view.Top:=50;
   fm_table_view.Left:=50;
-  fm_table_view.dbgrid.Align:=alLeft;
-  fm_table_view.dbgrid.Anchors:=[akTop,akLeft];
+  fm_table_view.Width:=920;
+  fm_table_view.Height:=480;
+  fm_table_view.dbgrid.Align:=alNone;
+  fm_table_view.dbgrid.Anchors:=[];
 end;
 
 procedure Tfm_table_view.menu_backClick(Sender: TObject);
@@ -133,24 +131,39 @@ begin
   lb_vs.Caption:=fm_tournament.language.ReadString('GUI', 'lb_vs','');
   gb_team.Caption:=fm_tournament.language.ReadString('GUI','gb_team','');
   gb_points.Caption:=fm_tournament.language.ReadString('GUI','gb_points','');
+  lb_search.Caption:=fm_tournament.language.ReadString('GUI','lb_search','');
+  tab1.Caption:=fm_tournament.language.ReadString('GUI','tab1','');
+  tab2.Caption:=fm_tournament.language.ReadString('GUI','tab2','');
 
   //Objektdarstellung
+  //grid
   dbgrid.FastEditing:=false;
   dbgrid.Enabled:=false;
-
- {dbgrid.Columns[0].Width:=100;
-  for i:=1 to dbgrid.Columns.Count-1 do
-  dbgrid.Columns[i].Width:=70;}
+  dbgrid.Top:=30;
+  dbgrid.Left:=10;
   dbgrid.Width:=500;
+  dbgrid.Height:=410;
   dbgrid.AutoFillColumns:=true;
   dbgrid.ScrollBars:=ssNone;
+
+  //lookupcombobox
   dblcb_team1.ListSource:=db_source_teams;
-  dblcb_team1.KeyField:='Teamname';   
+  dblcb_team1.KeyField:='Teamname';
   dblcb_team2.ListSource:=db_source_teams;
   dblcb_team2.KeyField:='Teamname';
+
+  //edits
   ed_points_team1.text:='';
   ed_points_team2.text:='';
-  end;
+  ed_search.Text:='';
+
+  //pagecontroller
+  pc_controlles.Top:=10;
+  pc_controlles.Left:=530;
+  pc_controlles.Width:=370;
+  pc_controlles.Height:=430;
+
+end;
 
 procedure Tfm_table_view.ConnectDatabaseToGrid;
 begin

@@ -45,6 +45,8 @@ type
     tab2: TTabSheet;
     procedure dblcb_team1Exit(Sender: TObject);
     procedure dblcb_team2Exit(Sender: TObject);
+    procedure ed_points_team1KeyPress(Sender: TObject; var Key: char);
+    procedure ed_points_team2KeyPress(Sender: TObject; var Key: char);
     procedure ed_searchChange(Sender: TObject);
     procedure FormActivate(Sender: TObject);
     procedure FormClose(Sender: TObject; var CloseAction: TCloseAction);
@@ -94,24 +96,45 @@ begin
 end;
 
 procedure Tfm_table_view.dblcb_team1Exit(Sender: TObject);
+var
+  temp:integer;
 begin
+  temp:=dblcb_team2.ItemIndex;
   if(dblcb_team1.ItemIndex<>-1)then
   begin
     fm_tournament.SqlQuery('SELECT Teamname FROM ' + ACTIVE_TABLE + ' WHERE NOT Teamname = ' + #39 + dblcb_team1.Text + #39 + ';', db_query_team2);
     dblcb_team2.ListSource:=db_source_team2;
     dblcb_team2.KeyField:='Teamname';
-  end;
+  end;            
+  dblcb_team2.ItemIndex:=temp;
 end;
 
 procedure Tfm_table_view.dblcb_team2Exit(Sender: TObject);
+var
+  temp:integer;
 begin
+  temp:=dblcb_team1.ItemIndex;
   if(dblcb_team2.ItemIndex<>-1)then
   begin
     fm_tournament.SqlQuery('SELECT Teamname FROM ' + ACTIVE_TABLE + ' WHERE NOT Teamname = ' + #39 + dblcb_team2.Text + #39 + ';', db_query_team1);
     dblcb_team1.ListSource:=db_source_team1;
     dblcb_team1.KeyField:='Teamname';
-    ShowMessage(dblcb_team2.text);
   end;
+  dblcb_team1.ItemIndex:=temp;
+end;
+
+procedure Tfm_table_view.ed_points_team1KeyPress(Sender: TObject; var Key: char
+  );
+begin
+  if ((Length(ed_points_team1.text)>3) and (key<>#8))then key:=#0;
+  if not(key IN ['1'..'9',#8])then key:=#0;
+end;
+
+procedure Tfm_table_view.ed_points_team2KeyPress(Sender: TObject; var Key: char
+  );
+begin
+  if ((Length(ed_points_team2.text)>3) and (key<>#8))then key:=#0;
+  if not(key IN ['1'..'9',#8])then key:=#0;
 end;
 
 procedure Tfm_table_view.FormClose(Sender: TObject;
@@ -202,9 +225,11 @@ begin
 
   //lookupcombobox
   dblcb_team1.ListSource:=db_source_teams;
-  dblcb_team1.KeyField:='Teamname';
+  dblcb_team1.KeyField:='Teamname';    
+  dblcb_team1.AutoDropDown:=true;
   dblcb_team2.ListSource:=db_source_teams;
   dblcb_team2.KeyField:='Teamname';
+  dblcb_team2.AutoDropDown:=true;
 
   //edits
   ed_points_team1.text:='';

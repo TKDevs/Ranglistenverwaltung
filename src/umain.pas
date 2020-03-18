@@ -52,8 +52,12 @@ var
 implementation
 
 uses utable;
-
+             
+//preprocessing commands
 {$R *.lfm}
+{$macro on}
+{$define ACTIVE_TABLE := fm_tournament.dblcb_tables.Items[fm_tournament.dblcb_tables.ItemIndex]}
+{$define LOAD_TRANSLATION := fm_tournament.language.ReadString}
 
 { Tfm_tournament }
 
@@ -81,8 +85,8 @@ begin
   //Formatierungen der Form
   fm_tournament.Top:=50;
   fm_tournament.Left:=50;
-  fm_tournament.Width:=354;
-  fm_tournament.Height:=93;
+  fm_tournament.Width:=340;
+  fm_tournament.Height:=95;
 
   AssignLanguageFile('deutsch.ini');
 end;
@@ -166,15 +170,15 @@ procedure Tfm_tournament.FormatGUI;
 begin
   //Legt die Formatierungen für alle GUI-Elemente fest
 
-  fm_tournament.Caption:=language.ReadString('GUI','fm_tournament','');
-  lb_table.Caption:=language.ReadString('GUI','lb_table','');;
-  bt_show_table.Caption:=language.ReadString('GUI','bt_show_table','');
-  menu_option.Caption:=language.ReadString('GUI','menu_option','');
-  menu_language.Caption:=language.ReadString('GUI','menu_language','');
-  menu_export.Caption:=language.ReadString('GUI','menu_export','');
-  menu_close.Caption:=language.ReadString('GUI','menu_close','');
-  menu_german.Caption:=language.ReadString('GUI','menu_german','');
-  menu_english.Caption:=language.ReadString('GUI','menu_english','');
+  fm_tournament.Caption:=LOAD_TRANSLATION('GUI','fm_tournament','');
+  lb_table.Caption:=LOAD_TRANSLATION('GUI','lb_table','');;
+  bt_show_table.Caption:=LOAD_TRANSLATION('GUI','bt_show_table','');
+  menu_option.Caption:=LOAD_TRANSLATION('GUI','menu_option','');
+  menu_language.Caption:=LOAD_TRANSLATION('GUI','menu_language','');
+  menu_export.Caption:=LOAD_TRANSLATION('GUI','menu_export','');
+  menu_close.Caption:=LOAD_TRANSLATION('GUI','menu_close','');
+  menu_german.Caption:=LOAD_TRANSLATION('GUI','menu_german','');
+  menu_english.Caption:=LOAD_TRANSLATION('GUI','menu_english','');
   dblcb_tables.ItemIndex:=0; 
   dblcb_tables.AutoSelect:=false;
   dblcb_tables.Sorted:=true;

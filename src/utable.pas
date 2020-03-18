@@ -38,6 +38,7 @@ type
     pc_controlles: TPageControl;
     tab1: TTabSheet;
     tab2: TTabSheet;
+    procedure ed_searchChange(Sender: TObject);
     procedure FormActivate(Sender: TObject);
     procedure FormClose(Sender: TObject; var CloseAction: TCloseAction);
     procedure FormCreate(Sender: TObject);
@@ -61,7 +62,11 @@ implementation
 
 uses umain;
 
+//preprocessing commands
 {$R *.lfm}
+{$macro on}
+{$define ACTIVE_TABLE := fm_tournament.dblcb_tables.Items[fm_tournament.dblcb_tables.ItemIndex]}
+{$define LOAD_TRANSLATION := fm_tournament.language.ReadString}
 
 { Tfm_table_view }
 
@@ -72,6 +77,11 @@ begin
   TableSelection;
   TeamSelection;
   FormatGUI;
+end;
+
+procedure Tfm_table_view.ed_searchChange(Sender: TObject);
+begin
+  fm_tournament.SqlQuery('SELECT * FROM ' + ACTIVE_TABLE + ' WHERE Teamname like '+#39+'%'+ ed_search.text + '%' +#39+ ';', db_query_table);
 end;
 
 procedure Tfm_table_view.FormClose(Sender: TObject;
@@ -85,10 +95,11 @@ begin
   //Formatierung der Form
   fm_table_view.Top:=50;
   fm_table_view.Left:=50;
-  fm_table_view.Width:=920;
-  fm_table_view.Height:=480;
   fm_table_view.dbgrid.Align:=alNone;
-  fm_table_view.dbgrid.Anchors:=[];
+  fm_table_view.Constraints.MinHeight:=470;
+  fm_table_view.Constraints.MaxHeight:=470;
+  fm_table_view.Constraints.MinWidth:=910;
+  fm_table_view.Constraints.MaxWidth:=910;
 end;
 
 procedure Tfm_table_view.menu_backClick(Sender: TObject);
@@ -116,33 +127,32 @@ begin
 end;
 
 procedure Tfm_table_view.FormatGUI;
-//var i:integer;
 begin
   //Legt die Formatierungen für alle GUI-Elemente fest
   //Spracheinstellungen
-  fm_table_view.Caption:=fm_tournament.language.ReadString('GUI','fm_table_view','');
-  menu_language.Caption:=fm_tournament.language.ReadString('GUI','menu_language','');
-  menu_option.Caption:=fm_tournament.language.ReadString('GUI','menu_option','');
-  menu_back.Caption:=fm_tournament.language.ReadString('GUI','menu_back','');
-  menu_close.Caption:=fm_tournament.language.ReadString('GUI','menu_close',''); 
-  menu_export.Caption:=fm_tournament.language.ReadString('GUI','menu_export','');
-  menu_german.Caption:=fm_tournament.language.ReadString('GUI','menu_german','');
-  menu_english.Caption:=fm_tournament.language.ReadString('GUI','menu_english','');
-  lb_vs.Caption:=fm_tournament.language.ReadString('GUI', 'lb_vs','');
-  gb_team.Caption:=fm_tournament.language.ReadString('GUI','gb_team','');
-  gb_points.Caption:=fm_tournament.language.ReadString('GUI','gb_points','');
-  lb_search.Caption:=fm_tournament.language.ReadString('GUI','lb_search','');
-  tab1.Caption:=fm_tournament.language.ReadString('GUI','tab1','');
-  tab2.Caption:=fm_tournament.language.ReadString('GUI','tab2','');
+  fm_table_view.Caption:=LOAD_TRANSLATION('GUI','fm_table_view','');
+  menu_language.Caption:=LOAD_TRANSLATION('GUI','menu_language','');
+  menu_option.Caption:=LOAD_TRANSLATION('GUI','menu_option','');
+  menu_back.Caption:=LOAD_TRANSLATION('GUI','menu_back','');
+  menu_close.Caption:=LOAD_TRANSLATION('GUI','menu_close','');
+  menu_export.Caption:=LOAD_TRANSLATION('GUI','menu_export','');
+  menu_german.Caption:=LOAD_TRANSLATION('GUI','menu_german','');
+  menu_english.Caption:=LOAD_TRANSLATION('GUI','menu_english','');
+  lb_vs.Caption:=LOAD_TRANSLATION('GUI', 'lb_vs','');
+  gb_team.Caption:=LOAD_TRANSLATION('GUI','gb_team','');
+  gb_points.Caption:=LOAD_TRANSLATION('GUI','gb_points','');
+  lb_search.Caption:=LOAD_TRANSLATION('GUI','lb_search','');
+  tab1.Caption:=LOAD_TRANSLATION('GUI','tab1','');
+  tab2.Caption:=LOAD_TRANSLATION('GUI','tab2','');
 
   //Objektdarstellung
   //grid
   dbgrid.FastEditing:=false;
   dbgrid.Enabled:=false;
-  dbgrid.Top:=30;
+  dbgrid.Top:=40;
   dbgrid.Left:=10;
   dbgrid.Width:=500;
-  dbgrid.Height:=410;
+  dbgrid.Height:=400;
   dbgrid.AutoFillColumns:=true;
   dbgrid.ScrollBars:=ssNone;
 
@@ -172,8 +182,8 @@ end;
 
 procedure Tfm_table_view.TableSelection;
 begin
-  //Lässt alle Tabellen der Datenbank in der combobox anzeigen
-  fm_tournament.SqlQuery('SELECT * FROM ' + fm_tournament.dblcb_tables.Items[fm_tournament.dblcb_tables.ItemIndex] + ';', db_query_table);
+  //Anzeigen der ausgewählten Tabelle
+  fm_tournament.SqlQuery('SELECT * FROM ' + ACTIVE_TABLE + ';', db_query_table);
   dbgrid.DataSource:=db_source_table;
 end;
 
@@ -192,7 +202,8 @@ end;
 
 procedure Tfm_table_view.TeamSelection;
 begin
-  fm_tournament.SqlQuery('SELECT Teamname FROM ' + fm_tournament.dblcb_tables.Items[fm_tournament.dblcb_tables.ItemIndex] + ';', db_query_teams);
+  //Lässt alle Teams Anzeigen
+  fm_tournament.SqlQuery('SELECT Teamname FROM ' + ACTIVE_TABLE + ';', db_query_teams);
 end;
 
 end.

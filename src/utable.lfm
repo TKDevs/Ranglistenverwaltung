@@ -1,7 +1,7 @@
 object fm_table_view: Tfm_table_view
-  Left = 972
+  Left = 355
   Height = 702
-  Top = 188
+  Top = 225
   Width = 914
   Caption = 'fm_table_view'
   ClientHeight = 682
@@ -10,7 +10,7 @@ object fm_table_view: Tfm_table_view
   OnActivate = FormActivate
   OnClose = FormClose
   OnCreate = FormCreate
-  LCLVersion = '2.0.4.0'
+  LCLVersion = '2.0.6.0'
   object dbgrid: TDBGrid
     Left = 8
     Height = 408
@@ -77,6 +77,7 @@ object fm_table_view: Tfm_table_view
           Width = 136
           ListFieldIndex = 0
           LookupCache = False
+          OnExit = dblcb_team1Exit
           TabOrder = 0
         end
         object dblcb_team2: TDBLookupComboBox
@@ -86,6 +87,7 @@ object fm_table_view: Tfm_table_view
           Width = 136
           ListFieldIndex = 0
           LookupCache = False
+          OnExit = dblcb_team2Exit
           TabOrder = 1
         end
       end
@@ -168,6 +170,26 @@ object fm_table_view: Tfm_table_view
   end
   object sd_export: TSaveDialog
     left = 224
+    top = 576
+  end
+  object db_source_team1: TDataSource
+    left = 288
+    top = 576
+  end
+  object db_query_team1: TSQLQuery
+    FieldDefs = <>
+    Params = <>
+    left = 320
+    top = 576
+  end
+  object db_source_team2: TDataSource
+    left = 392
+    top = 576
+  end
+  object db_query_team2: TSQLQuery
+    FieldDefs = <>
+    Params = <>
+    left = 428
     top = 576
   end
 end

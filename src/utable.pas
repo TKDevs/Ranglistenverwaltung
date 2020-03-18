@@ -13,6 +13,8 @@ type
   { Tfm_table_view }
 
   Tfm_table_view = class(TForm)
+    db_source_team1: TDataSource;
+    db_source_team2: TDataSource;
     db_source_teams: TDataSource;
     dblcb_team1: TDBLookupComboBox;
     dblcb_team2: TDBLookupComboBox;
@@ -37,8 +39,12 @@ type
     db_query_teams: TSQLQuery;
     pc_controlles: TPageControl;
     sd_export: TSaveDialog;
+    db_query_team1: TSQLQuery;
+    db_query_team2: TSQLQuery;
     tab1: TTabSheet;
     tab2: TTabSheet;
+    procedure dblcb_team1Exit(Sender: TObject);
+    procedure dblcb_team2Exit(Sender: TObject);
     procedure ed_searchChange(Sender: TObject);
     procedure FormActivate(Sender: TObject);
     procedure FormClose(Sender: TObject; var CloseAction: TCloseAction);
@@ -85,6 +91,27 @@ end;
 procedure Tfm_table_view.ed_searchChange(Sender: TObject);
 begin
   fm_tournament.SqlQuery('SELECT * FROM ' + ACTIVE_TABLE + ' WHERE Teamname like '+#39+'%'+ ed_search.text + '%' +#39+ ';', db_query_table);
+end;
+
+procedure Tfm_table_view.dblcb_team1Exit(Sender: TObject);
+begin
+  if(dblcb_team1.ItemIndex<>-1)then
+  begin
+    fm_tournament.SqlQuery('SELECT Teamname FROM ' + ACTIVE_TABLE + ' WHERE NOT Teamname = ' + #39 + dblcb_team1.Text + #39 + ';', db_query_team2);
+    dblcb_team2.ListSource:=db_source_team2;
+    dblcb_team2.KeyField:='Teamname';
+  end;
+end;
+
+procedure Tfm_table_view.dblcb_team2Exit(Sender: TObject);
+begin
+  if(dblcb_team2.ItemIndex<>-1)then
+  begin
+    fm_tournament.SqlQuery('SELECT Teamname FROM ' + ACTIVE_TABLE + ' WHERE NOT Teamname = ' + #39 + dblcb_team2.Text + #39 + ';', db_query_team1);
+    dblcb_team1.ListSource:=db_source_team1;
+    dblcb_team1.KeyField:='Teamname';
+    ShowMessage(dblcb_team2.text);
+  end;
 end;
 
 procedure Tfm_table_view.FormClose(Sender: TObject;
@@ -212,9 +239,17 @@ begin
   db_query_teams.Transaction:=fm_tournament.db_transaction;
   db_query_teams.DataBase:=fm_tournament.db_connector;
 
+  db_query_team1.Transaction:=fm_tournament.db_transaction;
+  db_query_team1.DataBase:=fm_tournament.db_connector;
+  db_query_team2.Transaction:=fm_tournament.db_transaction;
+  db_query_team2.DataBase:=fm_tournament.db_connector;
+
   //Datasource
   db_source_table.DataSet:=db_query_table;
   db_source_teams.DataSet:=db_query_teams;
+  db_source_team1.DataSet:=db_query_team1;
+  db_source_team2.DataSet:=db_query_team2;
+
 end;
 
 procedure Tfm_table_view.TeamSelection;

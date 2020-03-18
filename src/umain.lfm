@@ -76,9 +76,6 @@ object fm_tournament: Tfm_tournament
           OnClick = menu_englishClick
         end
       end
-      object menu_export: TMenuItem
-        Caption = 'menu_export'
-      end
       object menu_close: TMenuItem
         Caption = 'menu_close'
         OnClick = menu_closeClick

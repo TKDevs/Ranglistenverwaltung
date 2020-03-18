@@ -1,10 +1,10 @@
 object fm_table_view: Tfm_table_view
   Left = 972
-  Height = 616
+  Height = 702
   Top = 188
   Width = 914
   Caption = 'fm_table_view'
-  ClientHeight = 596
+  ClientHeight = 682
   ClientWidth = 914
   Menu = menu_main
   OnActivate = FormActivate
@@ -133,6 +133,7 @@ object fm_table_view: Tfm_table_view
       end
       object menu_export: TMenuItem
         Caption = 'menu_export'
+        OnClick = menu_exportClick
       end
       object menu_back: TMenuItem
         Caption = 'menu_back'
@@ -163,6 +164,10 @@ object fm_table_view: Tfm_table_view
     FieldDefs = <>
     Params = <>
     left = 184
+    top = 576
+  end
+  object sd_export: TSaveDialog
+    left = 224
     top = 576
   end
 end

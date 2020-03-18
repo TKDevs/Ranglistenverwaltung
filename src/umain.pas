@@ -26,7 +26,6 @@ type
     menu_option: TMenuItem;
     menu_language: TMenuItem;
     menu_close: TMenuItem;
-    menu_export: TMenuItem;
     procedure bt_show_tableClick(Sender: TObject);
     procedure dblcb_tablesKeyDown(Sender: TObject; var Key: Word;
       Shift: TShiftState);
@@ -122,7 +121,7 @@ begin
   except
     on e: Exception do
     begin
-  	  ShowMessage(language.readstring('Error','err_db_connector', ''));
+        ShowMessage(language.readstring('Error','err_db_connector', ''));
     	Application.Terminate;
     end;
   end;
@@ -169,19 +168,20 @@ end;
 procedure Tfm_tournament.FormatGUI;
 begin
   //Legt die Formatierungen für alle GUI-Elemente fest
-
+  //Spracheinstellungen
   fm_tournament.Caption:=LOAD_TRANSLATION('GUI','fm_tournament','');
   lb_table.Caption:=LOAD_TRANSLATION('GUI','lb_table','');;
   bt_show_table.Caption:=LOAD_TRANSLATION('GUI','bt_show_table','');
   menu_option.Caption:=LOAD_TRANSLATION('GUI','menu_option','');
   menu_language.Caption:=LOAD_TRANSLATION('GUI','menu_language','');
-  menu_export.Caption:=LOAD_TRANSLATION('GUI','menu_export','');
   menu_close.Caption:=LOAD_TRANSLATION('GUI','menu_close','');
   menu_german.Caption:=LOAD_TRANSLATION('GUI','menu_german','');
   menu_english.Caption:=LOAD_TRANSLATION('GUI','menu_english','');
   dblcb_tables.ItemIndex:=0; 
   dblcb_tables.AutoSelect:=false;
   dblcb_tables.Sorted:=true;
+
+  //Button
 end;
 
 procedure Tfm_tournament.TabelSelection;

@@ -36,6 +36,7 @@ type
     db_query_table: TSQLQuery;
     db_query_teams: TSQLQuery;
     pc_controlles: TPageControl;
+    sd_export: TSaveDialog;
     tab1: TTabSheet;
     tab2: TTabSheet;
     procedure ed_searchChange(Sender: TObject);
@@ -45,6 +46,7 @@ type
     procedure menu_backClick(Sender: TObject);
     procedure menu_closeClick(Sender: TObject);
     procedure menu_englishClick(Sender: TObject);
+    procedure menu_exportClick(Sender: TObject);
     procedure menu_germanClick(Sender: TObject);
   private
     procedure FormatGUI;
@@ -52,6 +54,7 @@ type
     procedure TableSelection;
     procedure ConnectDatabase;
     procedure TeamSelection;
+    procedure ExportTable(const grid:TDBGrid;const path:string);
   public
   end;
 
@@ -118,6 +121,20 @@ procedure Tfm_table_view.menu_englishClick(Sender: TObject);
 begin
   fm_tournament.AssignLanguageFile('englisch.ini');
   FormatGUI;
+end;
+
+procedure Tfm_table_view.menu_exportClick(Sender: TObject);
+begin
+  if (sd_export.Execute) then
+  begin
+    try
+      ExportTable(dbgrid, sd_export.FileName);
+    except
+      on e: Exception do
+      ShowMessage(LOAD_TRANSLATION('Info','inf_save_fail',''));
+    end;
+    ShowMessage(LOAD_TRANSLATION('Info','inf_save_success',''));
+  end;
 end;
 
 procedure Tfm_table_view.menu_germanClick(Sender: TObject);
@@ -204,6 +221,23 @@ procedure Tfm_table_view.TeamSelection;
 begin
   //Lässt alle Teams Anzeigen
   fm_tournament.SqlQuery('SELECT Teamname FROM ' + ACTIVE_TABLE + ';', db_query_teams);
+end;
+
+procedure Tfm_table_view.ExportTable(const grid: TDBGrid; const path: string);
+var i,j:integer;
+    sl:TStringList;
+begin
+  sl:= TStringList.Create;
+  db_source_table.DataSet.First;
+  for i:= 1 to  db_source_table.DataSet.RecordCount do
+  begin
+    sl.Add('');
+    db_source_table.DataSet.RecNo := i;
+    for j := 0 to db_source_table.DataSet.Fields.Count - 1 do
+      sl[SL.Count - 1]:= sl[sl.Count - 1] + db_source_table.DataSet.Fields[j].AsString + ';';
+  end;
+  sl.SaveToFile(path);
+  sl.Free;
 end;
 
 end.

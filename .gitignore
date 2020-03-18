@@ -8,3 +8,4 @@ bin/
 *.lps
 *.res
 *.dbg
+*.csv

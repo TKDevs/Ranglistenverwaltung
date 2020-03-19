@@ -60,6 +60,7 @@ type
     procedure menu_exportClick(Sender: TObject);
     procedure menu_germanClick(Sender: TObject);
   private
+    procedure SQLUpdate(statement: AnsiString; var sql_query: TSQLQuery);
     procedure FormatGUI;
     procedure ConnectDatabaseToGrid;
     procedure TableSelection;
@@ -126,13 +127,14 @@ begin
     end
     else if((StrtoInt(ed_points_team1.text))<(StrtoInt(ed_points_team2.text)))then
     begin
-      fm_tournament.SqlQuery('UPDATE ' + ACTIVE_TABLE + ' SET Siege=Siege+1 WHERE Teamname=' + dblcb_team2.text+ ';', db_query_change);
-      fm_tournament.SqlQuery('UPDATE ' + ACTIVE_TABLE + ' SET Niederlagen=Niederlagen+1 WHERE Teamname=' + dblcb_team1.text+ ';', db_query_change);
+      fm_table_view.SqlUpdate('UPDATE ' + ACTIVE_TABLE + ' SET Siege=1 WHERE Teamname=' + #39 + dblcb_team2.text + #39 + ';', db_query_change);
+      fm_table_view.SqlUpdate('UPDATE ' + ACTIVE_TABLE + ' SET Niederlagen=1 WHERE Teamname=' + dblcb_team1.text + #39 + ';', db_query_change);
     end
     else
     begin
-      fm_tournament.SqlQuery('UPDATE ' + ACTIVE_TABLE + ' SET Siege=Siege+1 WHERE Teamname=' + dblcb_team1.text+ ';', db_query_change);
-      fm_tournament.SqlQuery('UPDATE ' + ACTIVE_TABLE + ' SET Niederlagen=Niederlagen+1 WHERE Teamname=' + dblcb_team2.text+ ';', db_query_change);
+      fm_table_view.SqlUpdate.('UPDATE ' + ACTIVE_TABLE + ' SET Siege=Siege+1 WHERE Teamname=' + #39 + dblcb_team1.text + #39 + ';', db_query_change);
+      fm_table_view.SqlUpdate('UPDATE ' + ACTIVE_TABLE + ' SET Niederlagen=Niederlagen+1 WHERE Teamname=' + #39 + dblcb_team2.text + #39 +';', db_query_change);
+
     end;
   end;
 end;
@@ -221,6 +223,14 @@ begin
   FormatGUI;
 end;
 
+procedure Tfm_table_view.SQLUpdate(statement: AnsiString;
+  var sql_query: TSQLQuery);
+begin
+  sql_query.Active:=false;
+  sql_query.UpdateSQL.AddStrings(statement, true);
+  sql_query.Active:=true;
+end;
+
 procedure Tfm_table_view.FormatGUI;
 begin
   //Legt die Formatierungen für alle GUI-Elemente fest
@@ -306,7 +316,6 @@ begin
   db_source_teams.DataSet:=db_query_teams;
   db_source_team1.DataSet:=db_query_team1;
   db_source_team2.DataSet:=db_query_team2;
-
 end;
 
 procedure Tfm_table_view.TeamSelection;

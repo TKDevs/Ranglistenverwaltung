@@ -1,7 +1,7 @@
 object fm_table_view: Tfm_table_view
-  Left = 1180
+  Left = 496
   Height = 702
-  Top = 145
+  Top = 161
   Width = 914
   Caption = 'fm_table_view'
   ClientHeight = 682
@@ -10,7 +10,7 @@ object fm_table_view: Tfm_table_view
   OnActivate = FormActivate
   OnClose = FormClose
   OnCreate = FormCreate
-  LCLVersion = '2.0.4.0'
+  LCLVersion = '2.0.6.0'
   object dbgrid: TDBGrid
     Left = 8
     Height = 408
@@ -117,6 +117,15 @@ object fm_table_view: Tfm_table_view
           TabOrder = 1
         end
       end
+      object bt_insert_game: TButton
+        Left = 8
+        Height = 25
+        Top = 152
+        Width = 345
+        Caption = 'bt_insert_game'
+        OnClick = bt_insert_gameClick
+        TabOrder = 2
+      end
     end
   end
   object menu_main: TMainMenu
@@ -192,6 +201,12 @@ object fm_table_view: Tfm_table_view
     FieldDefs = <>
     Params = <>
     left = 428
+    top = 576
+  end
+  object db_query_change: TSQLQuery
+    FieldDefs = <>
+    Params = <>
+    left = 536
     top = 576
   end
 end

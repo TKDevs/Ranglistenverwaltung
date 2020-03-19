@@ -13,6 +13,7 @@ type
   { Tfm_table_view }
 
   Tfm_table_view = class(TForm)
+    bt_insert_game: TButton;
     db_source_team1: TDataSource;
     db_source_team2: TDataSource;
     db_source_teams: TDataSource;
@@ -41,8 +42,10 @@ type
     sd_export: TSaveDialog;
     db_query_team1: TSQLQuery;
     db_query_team2: TSQLQuery;
+    db_query_change: TSQLQuery;
     tab1: TTabSheet;
     tab2: TTabSheet;
+    procedure bt_insert_gameClick(Sender: TObject);
     procedure dblcb_team1Exit(Sender: TObject);
     procedure dblcb_team2Exit(Sender: TObject);
     procedure ed_points_team1KeyPress(Sender: TObject; var Key: char);
@@ -107,6 +110,31 @@ begin
     dblcb_team2.KeyField:='Teamname';
   end;            
   dblcb_team2.ItemIndex:=temp;
+end;
+
+procedure Tfm_table_view.bt_insert_gameClick(Sender: TObject);
+begin
+  if(dblcb_team1.text='')or(dblcb_team2.text='')or(ed_points_team1.text='')or(ed_points_team2.text='')then
+  begin
+    ShowMessage('Bitte die alle Felder korrekt ausfüllen!');
+  end
+  else
+  begin
+    if((StrtoInt(ed_points_team1.text))=(StrtoInt(ed_points_team2.text)))then
+    begin
+      showmessage('Es herrschte Gleichstand, daher werden keine Punkte vergeben!');
+    end
+    else if((StrtoInt(ed_points_team1.text))<(StrtoInt(ed_points_team2.text)))then
+    begin
+      fm_tournament.SqlQuery('UPDATE ' + ACTIVE_TABLE + ' SET Siege=Siege+1 WHERE Teamname=' + dblcb_team2.text+ ';', db_query_change);
+      fm_tournament.SqlQuery('UPDATE ' + ACTIVE_TABLE + ' SET Niederlagen=Niederlagen+1 WHERE Teamname=' + dblcb_team1.text+ ';', db_query_change);
+    end
+    else
+    begin
+      fm_tournament.SqlQuery('UPDATE ' + ACTIVE_TABLE + ' SET Siege=Siege+1 WHERE Teamname=' + dblcb_team1.text+ ';', db_query_change);
+      fm_tournament.SqlQuery('UPDATE ' + ACTIVE_TABLE + ' SET Niederlagen=Niederlagen+1 WHERE Teamname=' + dblcb_team2.text+ ';', db_query_change);
+    end;
+  end;
 end;
 
 procedure Tfm_table_view.dblcb_team2Exit(Sender: TObject);
@@ -211,6 +239,7 @@ begin
   lb_search.Caption:=LOAD_TRANSLATION('GUI','lb_search','');
   tab1.Caption:=LOAD_TRANSLATION('GUI','tab1','');
   tab2.Caption:=LOAD_TRANSLATION('GUI','tab2','');
+  bt_insert_game.Caption:='Speil eintragen';
 
   //Objektdarstellung
   //grid
@@ -268,6 +297,9 @@ begin
   db_query_team1.DataBase:=fm_tournament.db_connector;
   db_query_team2.Transaction:=fm_tournament.db_transaction;
   db_query_team2.DataBase:=fm_tournament.db_connector;
+
+  db_query_change.Transaction:=fm_tournament.db_transaction;
+  db_query_change.DataBase:=fm_tournament.db_connector;
 
   //Datasource
   db_source_table.DataSet:=db_query_table;

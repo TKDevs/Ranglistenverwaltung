@@ -127,12 +127,12 @@ begin
     end
     else if((StrtoInt(ed_points_team1.text))<(StrtoInt(ed_points_team2.text)))then
     begin
-      fm_table_view.SqlUpdate('UPDATE ' + ACTIVE_TABLE + ' SET Siege=1 WHERE Teamname=' + #39 + dblcb_team2.text + #39 + ';', db_query_change);
-      fm_table_view.SqlUpdate('UPDATE ' + ACTIVE_TABLE + ' SET Niederlagen=1 WHERE Teamname=' + dblcb_team1.text + #39 + ';', db_query_change);
+      fm_table_view.SqlUpdate('UPDATE ' + ACTIVE_TABLE + ' SET Siege=Siege+1 WHERE Teamname=' + #39 + dblcb_team2.text + #39 + ';', db_query_change);
+      fm_table_view.SqlUpdate('UPDATE ' + ACTIVE_TABLE + ' SET Niederlagen=Niederlagen+1 WHERE Teamname=' + dblcb_team1.text + #39 + ';', db_query_change);
     end
     else
     begin
-      fm_table_view.SqlUpdate.('UPDATE ' + ACTIVE_TABLE + ' SET Siege=Siege+1 WHERE Teamname=' + #39 + dblcb_team1.text + #39 + ';', db_query_change);
+      fm_table_view.SqlUpdate('UPDATE ' + ACTIVE_TABLE + ' SET Siege=Siege+1 WHERE Teamname=' + #39 + dblcb_team1.text + #39 + ';', db_query_change);
       fm_table_view.SqlUpdate('UPDATE ' + ACTIVE_TABLE + ' SET Niederlagen=Niederlagen+1 WHERE Teamname=' + #39 + dblcb_team2.text + #39 +';', db_query_change);
 
     end;

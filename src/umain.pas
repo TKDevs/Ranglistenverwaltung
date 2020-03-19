@@ -38,11 +38,11 @@ type
   private
     procedure ConnectDatabase;
     procedure FormatGUI;
-    procedure TabelSelection;
+    procedure TableSelection;
   public
     language: TIniFile;
     procedure AssignLanguageFile(filename:string);
-    procedure SqlQuery(satement:AnsiString; var sql_query:TSQLQuery);
+    procedure SqlQuery(statement:AnsiString; var sql_query:TSQLQuery);
   end;
 
 var
@@ -156,12 +156,12 @@ begin
   end;
 end;
 
-procedure Tfm_tournament.SqlQuery(satement: AnsiString; var sql_query: TSQLQuery
-  );
+procedure Tfm_tournament.SqlQuery(statement: AnsiString;
+  var sql_query: TSQLQuery);
 begin
   //Erleichtert das Ändern einer SQL Abfrage einer TSQLQuery Komponente
   sql_query.Active:=false;
-  sql_query.SQL.AddStrings(satement, true);
+  sql_query.SQL.AddStrings(statement, true);
   sql_query.Active:=true;
 end;
 
@@ -184,7 +184,7 @@ begin
   //Button
 end;
 
-procedure Tfm_tournament.TabelSelection;
+procedure Tfm_tournament.TableSelection;
 begin
   //Lässt alle Tabellen der Datenbank in der combobox anzeigen
   SqlQuery('SHOW TABLES;', db_query_start);

@@ -1,7 +1,7 @@
 object fm_tournament: Tfm_tournament
-  Left = 1196
+  Left = 1216
   Height = 226
-  Top = 154
+  Top = 356
   Width = 580
   Caption = 'fm_tournament'
   ClientHeight = 206
@@ -10,7 +10,7 @@ object fm_tournament: Tfm_tournament
   OnActivate = FormActivate
   OnCreate = FormCreate
   OnDestroy = FormDestroy
-  LCLVersion = '2.0.6.0'
+  LCLVersion = '2.0.4.0'
   object lb_table: TLabel
     Left = 8
     Height = 15

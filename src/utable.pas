@@ -114,10 +114,12 @@ begin
 end;
 
 procedure Tfm_table_view.bt_insert_gameClick(Sender: TObject);
+var temp:AnsiString;
 begin
+  temp:=ACTIVE_TABLE;
   if(dblcb_team1.text='')or(dblcb_team2.text='')or(ed_points_team1.text='')or(ed_points_team2.text='')then
   begin
-    ShowMessage('Bitte alle Felder korrekt ausfüllen!');
+    ShowMessage('Bitte die alle Felder korrekt ausfüllen!');
   end
   else
   begin
@@ -127,16 +129,46 @@ begin
     end
     else if((StrtoInt(ed_points_team1.text))<(StrtoInt(ed_points_team2.text)))then
     begin
-      fm_table_view.SqlUpdate('UPDATE ' + ACTIVE_TABLE + ' SET Siege=Siege+1 WHERE Teamname=' + #39 + dblcb_team2.text + #39 + ';', db_query_change);
-      //fm_table_view.SqlUpdate('UPDATE ' + ACTIVE_TABLE + ' SET Niederlagen=Niederlagen+1 WHERE Teamname=' + dblcb_team1.text + #39 + ';', db_query_change);
+      //fieldauswählen
+      fm_table_view.SqlUpdate('UPDATE ' + temp + ' SET Siege=Siege+1 WHERE Teamname=' + #39 + dblcb_team2.text + #39 + ';', db_query_change);
+      db_query_change.Edit;
+      db_query_change.FieldByName('Siege').AsString:=inttostr(db_query_change.FieldByName('Siege').AsInteger+1);
+      db_query_change.post;
+
+      //fieldauswählen
+      fm_table_view.SqlUpdate('UPDATE ' + temp + ' SET Niederlagen=Niederlagen+1 WHERE Teamname=' + #39 + dblcb_team1.text + #39 + ';', db_query_change);
+      db_query_change.Edit;
+      db_query_change.FieldByName('Niederlagen').AsString:=inttostr(db_query_change.FieldByName('Niederlagen').AsInteger+1);
+      db_query_change.post;
     end
     else
     begin
-      fm_table_view.SqlUpdate('UPDATE ' + ACTIVE_TABLE + ' SET Siege=Siege+1 WHERE Teamname=' + #39 + dblcb_team1.text + #39 + ';', db_query_change);
-      //fm_table_view.SqlUpdate('UPDATE ' + ACTIVE_TABLE + ' SET Niederlagen=Niederlagen+1 WHERE Teamname=' + #39 + dblcb_team2.text + #39 +';', db_query_change);
+      //fieldauswählen
+      fm_table_view.SqlUpdate('UPDATE ' + temp + ' SET Siege=Siege+1 WHERE Teamname=' + #39 + dblcb_team1.text + #39 + ';', db_query_change);
+      db_query_change.Edit;
+      db_query_change.FieldByName('Siege').AsString:=inttostr(db_query_change.FieldByName('Siege').AsInteger+1);
+      db_query_change.post;
 
+      //fieldauswählen
+      fm_table_view.SqlUpdate('UPDATE ' + temp + ' SET Niederlagen=Niederlagen+1 WHERE Teamname=' + #39 + dblcb_team2.text + #39 + ';', db_query_change);
+      db_query_change.Edit;
+      db_query_change.FieldByName('Niederlagen').AsString:=inttostr(db_query_change.FieldByName('Niederlagen').AsInteger+1);
+      db_query_change.post;
     end;
   end;
+
+  //Da beim Hochladen der Information der Datenstrom in die andere Richtung geht muss nach der Änderung die Verbindung neu Aktiviert werden
+  fm_tournament.db_transaction.Active:=true;
+  db_query_table.Active:=true;
+  db_query_change.Active:=true;
+  db_query_team1.Active:=true; 
+  db_query_team2.Active:=true;
+  db_query_teams.Active:=true;
+  //leeren der Felder
+  dblcb_team1.ItemIndex:=-1;  
+  dblcb_team2.ItemIndex:=-1;
+  ed_points_team1.Text:=''; 
+  ed_points_team2.Text:='';
 end;
 
 procedure Tfm_table_view.dblcb_team2Exit(Sender: TObject);
@@ -227,14 +259,8 @@ procedure Tfm_table_view.SQLUpdate(statement: AnsiString;
   var sql_query: TSQLQuery);
 begin
   sql_query.Active:=false;
-  sql_query.SQL.Text:= 'select * from basketballrangliste';
-  sql_query.open;
-  sql_query.edit;
-  sql_query.FieldByName('Siege').AsString:='3';
-  sql_query.post;
-  sql_query.UpdateMode:=upWhereAll;
-  sql_query.ApplyUpdates;
-  fm_tournament.db_transaction.commit;
+  sql_query.UpdateSQL.text:=statement;
+  sql_query.Active:=true;
 end;
 
 procedure Tfm_table_view.FormatGUI;
@@ -255,7 +281,7 @@ begin
   lb_search.Caption:=LOAD_TRANSLATION('GUI','lb_search','');
   tab1.Caption:=LOAD_TRANSLATION('GUI','tab1','');
   tab2.Caption:=LOAD_TRANSLATION('GUI','tab2','');
-  bt_insert_game.Caption:='Speil eintragen';
+  bt_insert_game.Caption:=LOAD_TRANSLATION('GUI','bt_insert_game','');;
 
   //Objektdarstellung
   //grid
@@ -298,6 +324,7 @@ procedure Tfm_table_view.TableSelection;
 begin
   //Anzeigen der ausgewählten Tabelle
   fm_tournament.SqlQuery('SELECT * FROM ' + ACTIVE_TABLE + ';', db_query_table);
+  fm_tournament.SqlQuery('SELECT * FROM ' + ACTIVE_TABLE + ';', db_query_change);
   dbgrid.DataSource:=db_source_table;
 end;
 
@@ -316,6 +343,7 @@ begin
 
   db_query_change.Transaction:=fm_tournament.db_transaction;
   db_query_change.DataBase:=fm_tournament.db_connector;
+  db_query_change.Options:=[sqoAutoApplyUpdates,sqoAutoCommit];
 
   //Datasource
   db_source_table.DataSet:=db_query_table;

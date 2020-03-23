@@ -161,7 +161,7 @@ procedure Tfm_tournament.SqlQuery(statement: AnsiString;
 begin
   //Erleichtert das Ändern einer SQL Abfrage einer TSQLQuery Komponente
   sql_query.Active:=false;
-  sql_query.SQL.AddStrings(statement, true);
+  sql_query.SQL.Text:=statement;
   sql_query.Active:=true;
 end;
 

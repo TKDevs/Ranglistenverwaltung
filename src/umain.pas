@@ -63,7 +63,7 @@ uses utable;
 procedure Tfm_tournament.FormActivate(Sender: TObject);
 begin
   ConnectDatabase;
-  TabelSelection;
+  TableSelection;
   FormatGUI;
 end;
 

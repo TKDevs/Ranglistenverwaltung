@@ -117,7 +117,7 @@ procedure Tfm_table_view.bt_insert_gameClick(Sender: TObject);
 begin
   if(dblcb_team1.text='')or(dblcb_team2.text='')or(ed_points_team1.text='')or(ed_points_team2.text='')then
   begin
-    ShowMessage('Bitte die alle Felder korrekt ausfüllen!');
+    ShowMessage('Bitte alle Felder korrekt ausfüllen!');
   end
   else
   begin
@@ -128,12 +128,12 @@ begin
     else if((StrtoInt(ed_points_team1.text))<(StrtoInt(ed_points_team2.text)))then
     begin
       fm_table_view.SqlUpdate('UPDATE ' + ACTIVE_TABLE + ' SET Siege=Siege+1 WHERE Teamname=' + #39 + dblcb_team2.text + #39 + ';', db_query_change);
-      fm_table_view.SqlUpdate('UPDATE ' + ACTIVE_TABLE + ' SET Niederlagen=Niederlagen+1 WHERE Teamname=' + dblcb_team1.text + #39 + ';', db_query_change);
+      //fm_table_view.SqlUpdate('UPDATE ' + ACTIVE_TABLE + ' SET Niederlagen=Niederlagen+1 WHERE Teamname=' + dblcb_team1.text + #39 + ';', db_query_change);
     end
     else
     begin
       fm_table_view.SqlUpdate('UPDATE ' + ACTIVE_TABLE + ' SET Siege=Siege+1 WHERE Teamname=' + #39 + dblcb_team1.text + #39 + ';', db_query_change);
-      fm_table_view.SqlUpdate('UPDATE ' + ACTIVE_TABLE + ' SET Niederlagen=Niederlagen+1 WHERE Teamname=' + #39 + dblcb_team2.text + #39 +';', db_query_change);
+      //fm_table_view.SqlUpdate('UPDATE ' + ACTIVE_TABLE + ' SET Niederlagen=Niederlagen+1 WHERE Teamname=' + #39 + dblcb_team2.text + #39 +';', db_query_change);
 
     end;
   end;
@@ -227,8 +227,14 @@ procedure Tfm_table_view.SQLUpdate(statement: AnsiString;
   var sql_query: TSQLQuery);
 begin
   sql_query.Active:=false;
-  sql_query.UpdateSQL.AddStrings(statement, true);
-  sql_query.Active:=true;
+  sql_query.SQL.Text:= 'select * from basketballrangliste';
+  sql_query.open;
+  sql_query.edit;
+  sql_query.FieldByName('Siege').AsString:='3';
+  sql_query.post;
+  sql_query.UpdateMode:=upWhereAll;
+  sql_query.ApplyUpdates;
+  fm_tournament.db_transaction.commit;
 end;
 
 procedure Tfm_table_view.FormatGUI;

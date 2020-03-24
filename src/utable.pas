@@ -602,7 +602,7 @@ begin
         Teampoints[1]:=1;
         Teampoints[2]:=0;
       end
-      else Teampoints[1]:=800;Teampoints[2]:=200;
+      else Teampoints[1]:=0.5;Teampoints[2]:=0.5;
     end
     else if(difference<0)then
     //Team 2 Gewinnt
@@ -610,8 +610,8 @@ begin
       Teampoints[2]:=1;
       Teampoints[1]:=0;
     end;
+    Result:=Teampoints;
   end;
-  Result:=Teampoints;
 end;
 
 procedure Tfm_table_view.ReconnectDatabase(const active_table_index: integer);

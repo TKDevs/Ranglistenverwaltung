@@ -1,11 +1,11 @@
 -- phpMyAdmin SQL Dump
--- version 4.9.2
+-- version 5.0.1
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Erstellungszeit: 09. Mrz 2020 um 08:59
+-- Erstellungszeit: 24. Mrz 2020 um 18:28
 -- Server-Version: 10.4.11-MariaDB
--- PHP-Version: 7.4.1
+-- PHP-Version: 7.4.3
 
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
 SET AUTOCOMMIT = 0;
@@ -42,9 +42,31 @@ CREATE TABLE `basketballrangliste` (
 --
 
 INSERT INTO `basketballrangliste` (`Teamname`, `Punktzahl`, `Siege`, `Niederlagen`) VALUES
-('Kentucky Tigers', 0, 0, 0),
-('Montana Eagles', 0, 0, 0),
-('New York Sharks', 0, 0, 0);
+('Kentucky Tigers', 800, 0, 7),
+('Montana Eagles', 2300, 9, 1),
+('New York Sharks', 200, 1, 2);
+
+-- --------------------------------------------------------
+
+--
+-- Tabellenstruktur für Tabelle `fussballrangliste`
+--
+
+CREATE TABLE `fussballrangliste` (
+  `Teamname` varchar(35) COLLATE latin1_german1_ci NOT NULL,
+  `Punktzahl` float UNSIGNED DEFAULT NULL,
+  `Siege` int(2) UNSIGNED DEFAULT NULL,
+  `Niederlagen` int(2) UNSIGNED DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_german1_ci;
+
+--
+-- Daten für Tabelle `fussballrangliste`
+--
+
+INSERT INTO `fussballrangliste` (`Teamname`, `Punktzahl`, `Siege`, `Niederlagen`) VALUES
+('FC Kicker', 0, 0, 1),
+('FC Pfosten', 1, 1, 0),
+('FC Rasenball', 0, 0, 0);
 
 --
 -- Indizes der exportierten Tabellen
@@ -54,6 +76,12 @@ INSERT INTO `basketballrangliste` (`Teamname`, `Punktzahl`, `Siege`, `Niederlage
 -- Indizes für die Tabelle `basketballrangliste`
 --
 ALTER TABLE `basketballrangliste`
+  ADD PRIMARY KEY (`Teamname`);
+
+--
+-- Indizes für die Tabelle `fussballrangliste`
+--
+ALTER TABLE `fussballrangliste`
   ADD PRIMARY KEY (`Teamname`);
 COMMIT;
 

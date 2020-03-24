@@ -69,8 +69,8 @@ end;
 
 procedure Tfm_tournament.bt_show_tableClick(Sender: TObject);
 begin
-  fm_table_view.show; 
-  fm_tournament.Hide;
+  fm_table_view.Show;
+  fm_tournament.hide;
 end;
 
 procedure Tfm_tournament.dblcb_tablesKeyDown(Sender: TObject; var Key: Word;

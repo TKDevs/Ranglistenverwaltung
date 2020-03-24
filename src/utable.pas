@@ -20,7 +20,6 @@ type
     bt_insert_game: TButton;
     bt_add_team: TButton;
     dblcb_delete_team: TDBLookupComboBox;
-    dblcb_add_team: TDBLookupComboBox;
     dblcb_edit_team: TDBLookupComboBox;
     db_source_team1: TDataSource;
     db_source_team2: TDataSource;
@@ -28,6 +27,7 @@ type
     dblcb_team1: TDBLookupComboBox;
     dblcb_team2: TDBLookupComboBox;
     ed_edit_teamname: TEdit;
+    ed_add_teamname: TEdit;
     ed_search: TEdit;
     ed_points_team1: TEdit;
     ed_points_team2: TEdit;
@@ -61,10 +61,20 @@ type
     db_query_change: TSQLQuery;
     tab1: TTabSheet;
     tab2: TTabSheet;
+    procedure bt_add_teamClick(Sender: TObject);
+    procedure bt_delete_teamClick(Sender: TObject);
+    procedure bt_edit_teamClick(Sender: TObject);
     procedure bt_insert_gameClick(Sender: TObject);
     procedure dbgridTitleClick(Column: TColumn);
+    procedure dblcb_delete_teamClick(Sender: TObject);
+    procedure dblcb_edit_teamClick(Sender: TObject);
+    procedure dblcb_team1Click(Sender: TObject);
     procedure dblcb_team1Exit(Sender: TObject);
+    procedure dblcb_team1KeyPress(Sender: TObject; var Key: char);
+    procedure dblcb_team2Click(Sender: TObject);
     procedure dblcb_team2Exit(Sender: TObject);
+    procedure dblcb_team2KeyPress(Sender: TObject; var Key: char);
+    procedure ed_edit_teamnameKeyPress(Sender: TObject; var Key: char);
     procedure ed_points_team1KeyPress(Sender: TObject; var Key: char);
     procedure ed_points_team2KeyPress(Sender: TObject; var Key: char);
     procedure ed_searchChange(Sender: TObject);
@@ -78,6 +88,8 @@ type
     procedure menu_germanClick(Sender: TObject);
   private
     procedure SQLUpdate(statement: AnsiString; var sql_query: TSQLQuery);
+    procedure SQLDelete(statement: AnsiString; var sql_query: TSQLQuery);
+    procedure SQLInsert(statement: AnsiString; var sql_query: TSQLQuery);
     procedure FormatGUI;
     procedure ConnectDatabaseToGrid;
     procedure TableSelection;
@@ -85,6 +97,7 @@ type
     procedure TeamSelection;
     procedure ExportTable(const grid:TDBGrid;const path:string);
     function Pointdifference(const points_team1,points_team2:string):TTeampoints;
+    procedure ReconnectDatabase(const active_table_index:integer);
   public
   protected
     table_sorted:boolean;
@@ -140,23 +153,33 @@ begin
   dblcb_team2.ItemIndex:=index;
 end;
 
+procedure Tfm_table_view.dblcb_team1KeyPress(Sender: TObject; var Key: char);
+begin
+  key:=#0;
+end;
+
+procedure Tfm_table_view.dblcb_team2Click(Sender: TObject);
+begin
+  dblcb_team2.DroppedDown:=true;
+end;
+
 procedure Tfm_table_view.bt_insert_gameClick(Sender: TObject);
 var temp:AnsiString;
     temp_index:integer; 
     Teampoints:TTeampoints;
 begin
-  //Da die Verbindung währen dem Ändern der Einträge unterbrochen wird muss die
-  //Referenz, welche Tabelle ausgewählt ist, zwischengespeichert werden
-  temp_index:=fm_tournament.dblcb_tables.ItemIndex;
-  temp:=ACTIVE_TABLE;
-  Teampoints:=Pointdifference(ed_points_team1.text,ed_points_team2.text);
-
   if(dblcb_team1.text='')or(dblcb_team2.text='')or(ed_points_team1.text='')or(ed_points_team2.text='')then
   begin
     ShowMessage(LOAD_TRANSLATION('Info','inf_fields_empty',''));
   end
   else
   begin
+    Teampoints:=Pointdifference(ed_points_team1.text,ed_points_team2.text);
+    //Da die Verbindung währen dem Ändern der Einträge unterbrochen wird muss die
+    //Referenz, welche Tabelle ausgewählt ist, zwischengespeichert werden
+    temp_index:=fm_tournament.dblcb_tables.ItemIndex;
+    temp:=ACTIVE_TABLE;
+
     if((StrtoInt(ed_points_team1.text))=(StrtoInt(ed_points_team2.text)))then
     begin
       //gleichstand
@@ -224,22 +247,67 @@ begin
       db_query_change.FieldByName('Punktzahl').AsString:=inttostr(db_query_change.FieldByName('Punktzahl').AsInteger+Teampoints[2]);
       db_query_change.post;
     end;
+
+    //Da beim Hochladen der Information der Datenstrom in die andere Richtung geht muss nach der Änderung die Verbindung neu Aktiviert werden
+    ReconnectDatabase(temp_index);
   end;
 
-  //Da beim Hochladen der Information der Datenstrom in die andere Richtung geht muss nach der Änderung die Verbindung neu Aktiviert werden
-  fm_tournament.db_transaction.Active:=true;
-  fm_tournament.db_query_start.Active:=true;
-  fm_tournament.dblcb_tables.ItemIndex:=temp_index;
-  db_query_table.Active:=true;
-  db_query_change.Active:=true;
-  db_query_team1.Active:=true; 
-  db_query_team2.Active:=true;
-  db_query_teams.Active:=true;
   //leeren der Felder
-  dblcb_team1.ItemIndex:=-1;  
-  dblcb_team2.ItemIndex:=-1;
+  dblcb_team1.ListFieldIndex:=-1;
+  dblcb_team2.ListFieldIndex:=-1;
   ed_points_team1.Text:=''; 
   ed_points_team2.Text:='';
+end;
+
+procedure Tfm_table_view.bt_edit_teamClick(Sender: TObject);
+var temp_index:integer;
+    temp:string;
+begin
+  temp:=ACTIVE_TABLE;
+  temp_index:=fm_tournament.dblcb_tables.ItemIndex;
+  if (ed_edit_teamname.text<>'')then
+  fm_table_view.SQLUpdate('UPDATE '+temp+' SET Teamname='+#39+ed_edit_teamname.text+#39+' WHERE Teamname='+#39+dblcb_edit_team.Text+#39+';', db_query_change);
+  db_query_change.Edit;
+  db_query_change.FieldByName('Teamname').AsString:=ed_edit_teamname.text;
+  db_query_change.post;
+  ReconnectDatabase(temp_index);
+
+  dblcb_edit_team.ListFieldIndex:=-1;
+  ed_edit_teamname.Text:='';
+end;
+
+procedure Tfm_table_view.bt_delete_teamClick(Sender: TObject);
+var temp_index:integer;
+    temp:string;
+begin
+  temp:=ACTIVE_TABLE;
+  temp_index:=fm_tournament.dblcb_tables.ItemIndex;
+  if(dblcb_delete_team.text<>'')then
+  begin
+    fm_tournament.db_connector.ExecuteDirect('DELETE FROM '+temp+' WHERE Teamname='+#39+dblcb_delete_team.text+#39+';');
+    fm_tournament.db_transaction.Commit;
+  end;
+  ReconnectDatabase(temp_index);
+
+  dblcb_edit_team.ListFieldIndex:=-1;
+  dblcb_delete_team.ListFieldIndex:=-1;
+end;
+
+procedure Tfm_table_view.bt_add_teamClick(Sender: TObject);
+var temp_index:integer;
+    temp:string;
+begin
+  temp:=ACTIVE_TABLE;
+  temp_index:=fm_tournament.dblcb_tables.ItemIndex;
+  if(ed_add_teamname.text<>'')then
+  begin
+    fm_tournament.db_connector.ExecuteDirect('INSERT INTO '+temp+' (Teamname,Punktzahl,Siege,Niederlagen) VALUES('+#39+ed_add_teamname.text+#39+',0,0,0);');
+    fm_tournament.db_transaction.Commit;
+  end;
+  ReconnectDatabase(temp_index);
+
+  dblcb_edit_team.ListFieldIndex:=-1;
+  ed_add_teamname.Text:='';
 end;
 
 procedure Tfm_table_view.dbgridTitleClick(Column: TColumn);
@@ -254,6 +322,21 @@ begin
     fm_tournament.SqlQuery('SELECT * FROM '+ACTIVE_TABLE+' ORDER BY '+Column.FieldName+' DESC;', db_query_table);
     table_sorted:=true;
   end;
+end;
+
+procedure Tfm_table_view.dblcb_delete_teamClick(Sender: TObject);
+begin
+  dblcb_delete_team.DroppedDown:=true;
+end;
+
+procedure Tfm_table_view.dblcb_edit_teamClick(Sender: TObject);
+begin
+  dblcb_edit_team.DroppedDown:=true;
+end;
+
+procedure Tfm_table_view.dblcb_team1Click(Sender: TObject);
+begin
+  dblcb_team1.DroppedDown:=true;
 end;
 
 procedure Tfm_table_view.dblcb_team2Exit(Sender: TObject);
@@ -273,6 +356,18 @@ begin
     if(dblcb_team1.Items[i]=lastteam)then index:=i;
   end;
   dblcb_team1.ItemIndex:=index;
+end;
+
+procedure Tfm_table_view.dblcb_team2KeyPress(Sender: TObject; var Key: char);
+begin
+
+end;
+
+procedure Tfm_table_view.ed_edit_teamnameKeyPress(Sender: TObject; var Key: char
+  );
+begin
+  if((Length(ed_edit_teamname.Text)>35) and (key<>#8))then key:=#0;
+  if((key=#27) or (key=#59) or (key=#40) or (key=#41) or (key=#91) or (key=#93) or (key=#123) or (key=#125) or (key=#34))then key:=#0;
 end;
 
 procedure Tfm_table_view.ed_points_team1KeyPress(Sender: TObject; var Key: char
@@ -305,11 +400,12 @@ begin
   fm_table_view.Constraints.MaxHeight:=470;
   fm_table_view.Constraints.MinWidth:=910;
   fm_table_view.Constraints.MaxWidth:=910;
+  pc_controlles.TabIndex:=0;
 end;
 
 procedure Tfm_table_view.menu_backClick(Sender: TObject);
 begin
-  fm_tournament.show;
+  fm_tournament.Enabled:=true;
   fm_table_view.hide;
 end;
 
@@ -350,6 +446,22 @@ procedure Tfm_table_view.SQLUpdate(statement: AnsiString;
 begin
   sql_query.Active:=false;
   sql_query.UpdateSQL.text:=statement;
+  sql_query.Active:=true;
+end;
+
+procedure Tfm_table_view.SQLDelete(statement: AnsiString;
+  var sql_query: TSQLQuery);
+begin
+  sql_query.Active:=false;
+  sql_query.DeleteSQL.text:=statement;
+  sql_query.Active:=true;
+end;
+
+procedure Tfm_table_view.SQLInsert(statement: AnsiString;
+  var sql_query: TSQLQuery);
+begin
+  sql_query.Active:=false;
+  sql_query.InsertSQL.text:=statement;
   sql_query.Active:=true;
 end;
 
@@ -395,13 +507,9 @@ begin
 
   //lookupcombobox
   dblcb_team1.ListSource:=db_source_teams;
-  dblcb_team1.KeyField:='Teamname';    
-  dblcb_team1.AutoDropDown:=true;
+  dblcb_team1.KeyField:='Teamname';
   dblcb_team2.ListSource:=db_source_teams;
   dblcb_team2.KeyField:='Teamname';
-  dblcb_team2.AutoDropDown:=true;
-  dblcb_add_team.ListSource:=db_source_teams;
-  dblcb_add_team.KeyField:='Teamname';
   dblcb_delete_team.ListSource:=db_source_teams;
   dblcb_delete_team.KeyField:='Teamname';
   dblcb_edit_team.ListSource:=db_source_teams;
@@ -412,6 +520,7 @@ begin
   ed_points_team2.text:='';
   ed_search.Text:='';
   ed_edit_teamname.Text:='';
+  ed_add_teamname.Text:='';
 
   //pagecontroller
   pc_controlles.Top:=10;
@@ -462,6 +571,8 @@ procedure Tfm_table_view.TeamSelection;
 begin
   //Lässt alle Teams Anzeigen
   fm_tournament.SqlQuery('SELECT Teamname FROM ' + ACTIVE_TABLE + ';', db_query_teams);
+  fm_tournament.SqlQuery('SELECT * FROM '+ ACTIVE_TABLE+ ';',db_query_team1);          
+  fm_tournament.SqlQuery('SELECT * FROM '+ ACTIVE_TABLE+ ';',db_query_team2);
 end;
 
 procedure Tfm_table_view.ExportTable(const grid: TDBGrid; const path: string);
@@ -525,6 +636,18 @@ begin
     else Teampoints[2]:=800;Teampoints[1]:=200;
   end;
   Result:=Teampoints;
+end;
+
+procedure Tfm_table_view.ReconnectDatabase(const active_table_index: integer);
+begin
+  fm_tournament.db_transaction.Active:=true;
+  fm_tournament.db_query_start.Active:=true;
+  fm_tournament.dblcb_tables.ItemIndex:=active_table_index;
+  db_query_table.Active:=true;
+  db_query_change.Active:=true;
+  db_query_team1.Active:=true;
+  db_query_team2.Active:=true;
+  db_query_teams.Active:=true;
 end;
 
 end.

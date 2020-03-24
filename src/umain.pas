@@ -70,7 +70,9 @@ end;
 procedure Tfm_tournament.bt_show_tableClick(Sender: TObject);
 begin
   fm_table_view.Show;
-  fm_tournament.hide;
+  fm_tournament.Enabled:=false;
+  fm_tournament.Top:=10;
+  fm_tournament.Left:=10;
 end;
 
 procedure Tfm_tournament.dblcb_tablesKeyDown(Sender: TObject; var Key: Word;
@@ -82,8 +84,8 @@ end;
 procedure Tfm_tournament.FormCreate(Sender: TObject);
 begin
   //Formatierungen der Form
-  fm_tournament.Top:=50;
-  fm_tournament.Left:=50;
+  fm_tournament.Top:=10;
+  fm_tournament.Left:=10;
   fm_tournament.Width:=340;
   fm_tournament.Height:=95;
 

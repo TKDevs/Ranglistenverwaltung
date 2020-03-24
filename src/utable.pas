@@ -10,6 +10,8 @@ uses
 
 type
 
+  TTeampoints = array[1..2]of integer;
+
   { Tfm_table_view }
 
   Tfm_table_view = class(TForm)
@@ -60,6 +62,7 @@ type
     procedure menu_exportClick(Sender: TObject);
     procedure menu_germanClick(Sender: TObject);
   private
+    Teampoints:TTeampoints;
     procedure SQLUpdate(statement: AnsiString; var sql_query: TSQLQuery);
     procedure FormatGUI;
     procedure ConnectDatabaseToGrid;
@@ -67,6 +70,7 @@ type
     procedure ConnectDatabase;
     procedure TeamSelection;
     procedure ExportTable(const grid:TDBGrid;const path:string);
+    function Pointdifference:TTeampoints;
   public
   end;
 
@@ -101,16 +105,27 @@ end;
 
 procedure Tfm_table_view.dblcb_team1Exit(Sender: TObject);
 var
-  temp:integer;
+  lastindex:integer;
 begin
-  temp:=dblcb_team2.ItemIndex;
+  lastindex:=dblcb_team2.ItemIndex;
   if(dblcb_team1.ItemIndex<>-1)then
   begin
     fm_tournament.SqlQuery('SELECT Teamname FROM ' + ACTIVE_TABLE + ' WHERE NOT Teamname = ' + #39 + dblcb_team1.Text + #39 + ';', db_query_team2);
     dblcb_team2.ListSource:=db_source_team2;
     dblcb_team2.KeyField:='Teamname';
-  end;            
-  dblcb_team2.ItemIndex:=temp;
+  end;
+  if(lastindex=-1)then
+  begin
+    dblcb_team2.ItemIndex:=lastindex;
+  end
+  else if(lastindex>=dblcb_team2.ItemIndex)then
+  begin
+    dblcb_team2.ItemIndex:=lastindex+1;
+  end
+  else if(lastindex>dblcb_team2.itemindex)then
+  begin
+    dblcb_team2.ItemIndex:=lastindex;
+  end;
 end;
 
 procedure Tfm_table_view.bt_insert_gameClick(Sender: TObject);
@@ -129,6 +144,7 @@ begin
     end
     else if((StrtoInt(ed_points_team1.text))<(StrtoInt(ed_points_team2.text)))then
     begin
+      //Siege und Niederlagen um 1 erhöhen
       //fieldauswählen
       fm_table_view.SqlUpdate('UPDATE ' + temp + ' SET Siege=Siege+1 WHERE Teamname=' + #39 + dblcb_team2.text + #39 + ';', db_query_change);
       db_query_change.Edit;
@@ -140,9 +156,22 @@ begin
       db_query_change.Edit;
       db_query_change.FieldByName('Niederlagen').AsString:=inttostr(db_query_change.FieldByName('Niederlagen').AsInteger+1);
       db_query_change.post;
+
+      //Ranglistenpunktzahl eintragen
+      Pointdifference;
+      fm_table_view.SqlUpdate('UPDATE ' + temp + ' SET Punktzahl=Punktzahl+' + Inttostr(Teampoints[1]) + ' WHERE Teamname=' + #39 + dblcb_team1.text + #39 + ';', db_query_change);
+      db_query_change.Edit;
+      db_query_change.FieldByName('Punktzahl').AsString:=inttostr(db_query_change.FieldByName('Punktzahl').AsInteger+Teampoints[1]);
+      db_query_change.post;
+      db_query_change.Clear;
+      fm_table_view.SqlUpdate('UPDATE ' + temp + ' SET Punktzahl=Punktzahl+' + Inttostr(Teampoints[2]) + ' WHERE Teamname=' + #39 + dblcb_team2.text + #39 + ';', db_query_change);
+      db_query_change.Edit;
+      db_query_change.FieldByName('Punktzahl').AsString:=inttostr(db_query_change.FieldByName('Punktzahl').AsInteger+Teampoints[2]);
+      db_query_change.post;
     end
     else
     begin
+      //Siege und Niederlagen um 1 erhöhen
       //fieldauswählen
       fm_table_view.SqlUpdate('UPDATE ' + temp + ' SET Siege=Siege+1 WHERE Teamname=' + #39 + dblcb_team1.text + #39 + ';', db_query_change);
       db_query_change.Edit;
@@ -153,6 +182,18 @@ begin
       fm_table_view.SqlUpdate('UPDATE ' + temp + ' SET Niederlagen=Niederlagen+1 WHERE Teamname=' + #39 + dblcb_team2.text + #39 + ';', db_query_change);
       db_query_change.Edit;
       db_query_change.FieldByName('Niederlagen').AsString:=inttostr(db_query_change.FieldByName('Niederlagen').AsInteger+1);
+      db_query_change.post;
+      db_query_change.Clear;
+
+      //Ranglistenpunkte eintragen
+      Pointdifference;
+      fm_table_view.SqlUpdate('UPDATE ' + temp + ' SET Punktzahl=Punktzahl+' + Inttostr(Teampoints[1]) + ' WHERE Teamname=' + #39 + dblcb_team1.text + #39 + ';', db_query_change);
+      db_query_change.Edit;
+      db_query_change.FieldByName('Punktzahl').AsString:=inttostr(db_query_change.FieldByName('Punktzahl').AsInteger+Teampoints[1]);
+      db_query_change.post;
+      fm_table_view.SqlUpdate('UPDATE ' + temp + ' SET Punktzahl=Punktzahl+' + Inttostr(Teampoints[2]) + ' WHERE Teamname=' + #39 + dblcb_team2.text + #39 + ';', db_query_change);
+      db_query_change.Edit;
+      db_query_change.FieldByName('Punktzahl').AsString:=inttostr(db_query_change.FieldByName('Punktzahl').AsInteger+Teampoints[2]);
       db_query_change.post;
     end;
   end;
@@ -173,16 +214,27 @@ end;
 
 procedure Tfm_table_view.dblcb_team2Exit(Sender: TObject);
 var
-  temp:integer;
+  lastindex:integer;
 begin
-  temp:=dblcb_team1.ItemIndex;
+  lastindex:=dblcb_team1.ItemIndex;
   if(dblcb_team2.ItemIndex<>-1)then
   begin
     fm_tournament.SqlQuery('SELECT Teamname FROM ' + ACTIVE_TABLE + ' WHERE NOT Teamname = ' + #39 + dblcb_team2.Text + #39 + ';', db_query_team1);
     dblcb_team1.ListSource:=db_source_team1;
     dblcb_team1.KeyField:='Teamname';
   end;
-  dblcb_team1.ItemIndex:=temp;
+  if(lastindex=-1)then
+  begin
+    dblcb_team1.ItemIndex:=lastindex;
+  end
+  else if(lastindex>=dblcb_team1.ItemIndex)then
+  begin
+    dblcb_team1.ItemIndex:=lastindex+1;
+  end
+  else if(lastindex>dblcb_team1.itemindex)then
+  begin
+    dblcb_team1.ItemIndex:=lastindex;
+  end;
 end;
 
 procedure Tfm_table_view.ed_points_team1KeyPress(Sender: TObject; var Key: char
@@ -373,6 +425,51 @@ begin
   end;
   sl.SaveToFile(path);
   sl.Free;
+end;
+
+function Tfm_table_view.Pointdifference: TTeampoints;
+var
+  difference:integer;
+begin
+  //Gibt die Ranglistenpunkte anhand der Korbdifferenz(Punktedifferenz) aus
+  difference:=StrtoInt(ed_points_team1.text)-StrtoInt(ed_points_team2.text);
+  if (difference=0)then
+  begin
+    Teampoints[1]:=500;
+    Teampoints[2]:=500;
+  end
+  else if(difference>0)then
+  //Team 1 Gewinnt
+  begin
+    if(difference<10)then
+    begin
+      Teampoints[1]:=600;
+      Teampoints[2]:=400;
+    end
+    else if(difference<20)then
+    begin
+      Teampoints[2]:=700;
+      Teampoints[1]:=300;
+    end
+    else Teampoints[1]:=800;Teampoints[2]:=200;
+  end
+  else if(difference<0)then
+  //Team 2 Gewinnt
+  begin
+    if(difference>-10)then
+    begin
+      Teampoints[2]:=600;
+      Teampoints[1]:=400;
+    end
+    else if(difference>-20)then
+    begin
+      Teampoints[2]:=700;
+      Teampoints[1]:=300;
+    end
+    else Teampoints[2]:=800;Teampoints[1]:=200;
+  end;
+  Teampoints[1]:=0;
+  Teampoints[2]:=0;
 end;
 
 end.

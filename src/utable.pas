@@ -174,6 +174,7 @@ begin
   else
   begin
     Teampoints:=Pointdifference(ed_points_team1.text,ed_points_team2.text,ACTIVE_TABLE);
+    DecimalSeparator:='.';
     //Da die Verbindung währen dem Ändern der Einträge unterbrochen wird muss die
     //Referenz, welche Tabelle ausgewählt ist, zwischengespeichert werden
     temp_index:=fm_tournament.dblcb_tables.ItemIndex;

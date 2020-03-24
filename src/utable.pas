@@ -11,7 +11,7 @@ uses
 
 type
 
-  TTeampoints = array[1..2]of integer;
+  TTeampoints = array[1..2]of real;
 
   { Tfm_table_view }
 
@@ -94,7 +94,7 @@ type
     procedure ConnectDatabase;
     procedure TeamSelection;
     procedure ExportTable(const grid:TDBGrid;const path:string);
-    function Pointdifference(const points_team1,points_team2:string):TTeampoints;
+    function Pointdifference(const points_team1,points_team2,sport:string):TTeampoints;
     procedure ReconnectDatabase(const active_table_index:integer);
   public
   protected
@@ -173,7 +173,7 @@ begin
   end
   else
   begin
-    Teampoints:=Pointdifference(ed_points_team1.text,ed_points_team2.text);
+    Teampoints:=Pointdifference(ed_points_team1.text,ed_points_team2.text,ACTIVE_TABLE);
     //Da die Verbindung währen dem Ändern der Einträge unterbrochen wird muss die
     //Referenz, welche Tabelle ausgewählt ist, zwischengespeichert werden
     temp_index:=fm_tournament.dblcb_tables.ItemIndex;
@@ -184,8 +184,8 @@ begin
       //gleichstand
 
       //Ranglistenpunktzahl eintragen
-      SqlExecute('UPDATE ' + temp + ' SET Punktzahl=Punktzahl+' + Inttostr(Teampoints[1]) + ' WHERE Teamname=' + #39 + dblcb_team1.text + #39 + ';',fm_tournament.db_connector,fm_tournament.db_transaction);
-      SqlExecute('UPDATE ' + temp + ' SET Punktzahl=Punktzahl+' + Inttostr(Teampoints[2]) + ' WHERE Teamname=' + #39 + dblcb_team2.text + #39 + ';',fm_tournament.db_connector,fm_tournament.db_transaction);
+      SqlExecute('UPDATE ' + temp + ' SET Punktzahl=Punktzahl+' + Floattostr(Teampoints[1]) + ' WHERE Teamname=' + #39 + dblcb_team1.text + #39 + ';',fm_tournament.db_connector,fm_tournament.db_transaction);
+      SqlExecute('UPDATE ' + temp + ' SET Punktzahl=Punktzahl+' + Floattostr(Teampoints[2]) + ' WHERE Teamname=' + #39 + dblcb_team2.text + #39 + ';',fm_tournament.db_connector,fm_tournament.db_transaction);
     end
     else if((StrtoInt(ed_points_team1.text))<(StrtoInt(ed_points_team2.text)))then
     begin
@@ -198,8 +198,8 @@ begin
       SqlExecute('UPDATE ' + temp + ' SET Niederlagen=Niederlagen+1 WHERE Teamname=' + #39 + dblcb_team1.text + #39 + ';',fm_tournament.db_connector,fm_tournament.db_transaction);
 
       //Ranglistenpunktzahl eintragen
-      SqlExecute('UPDATE ' + temp + ' SET Punktzahl=Punktzahl+' + Inttostr(Teampoints[1]) + ' WHERE Teamname=' + #39 + dblcb_team1.text + #39 + ';',fm_tournament.db_connector,fm_tournament.db_transaction);
-      SqlExecute('UPDATE ' + temp + ' SET Punktzahl=Punktzahl+' + Inttostr(Teampoints[2]) + ' WHERE Teamname=' + #39 + dblcb_team2.text + #39 + ';',fm_tournament.db_connector,fm_tournament.db_transaction);
+      SqlExecute('UPDATE ' + temp + ' SET Punktzahl=Punktzahl+' + Floattostr(Teampoints[1]) + ' WHERE Teamname=' + #39 + dblcb_team1.text + #39 + ';',fm_tournament.db_connector,fm_tournament.db_transaction);
+      SqlExecute('UPDATE ' + temp + ' SET Punktzahl=Punktzahl+' + Floattostr(Teampoints[2]) + ' WHERE Teamname=' + #39 + dblcb_team2.text + #39 + ';',fm_tournament.db_connector,fm_tournament.db_transaction);
     end
     else
     begin
@@ -211,8 +211,8 @@ begin
       SqlExecute('UPDATE ' + temp + ' SET Niederlagen=Niederlagen+1 WHERE Teamname=' + #39 + dblcb_team2.text + #39 + ';',fm_tournament.db_connector,fm_tournament.db_transaction);
 
       //Ranglistenpunkte eintragen
-      SqlExecute('UPDATE ' + temp + ' SET Punktzahl=Punktzahl+' + Inttostr(Teampoints[1]) + ' WHERE Teamname=' + #39 + dblcb_team1.text + #39 + ';',fm_tournament.db_connector,fm_tournament.db_transaction);
-      SqlExecute('UPDATE ' + temp + ' SET Punktzahl=Punktzahl+' + Inttostr(Teampoints[2]) + ' WHERE Teamname=' + #39 + dblcb_team2.text + #39 + ';',fm_tournament.db_connector,fm_tournament.db_transaction);
+      SqlExecute('UPDATE ' + temp + ' SET Punktzahl=Punktzahl+' + Floattostr(Teampoints[1]) + ' WHERE Teamname=' + #39 + dblcb_team1.text + #39 + ';',fm_tournament.db_connector,fm_tournament.db_transaction);
+      SqlExecute('UPDATE ' + temp + ' SET Punktzahl=Punktzahl+' + Floattostr(Teampoints[2]) + ' WHERE Teamname=' + #39 + dblcb_team2.text + #39 + ';',fm_tournament.db_connector,fm_tournament.db_transaction);
     end;
 
     //Da beim Hochladen der Information der Datenstrom in die andere Richtung geht muss nach der Änderung die Verbindung neu Aktiviert werden
@@ -537,48 +537,79 @@ begin
   sl.Free;
 end;
 
-function Tfm_table_view.Pointdifference(const points_team1, points_team2: string
-  ): TTeampoints;
+function Tfm_table_view.Pointdifference(const points_team1, points_team2,
+  sport: string): TTeampoints;
 var
   difference:integer;
   Teampoints:TTeampoints;
 begin
-  //Gibt die Ranglistenpunkte anhand der Korbdifferenz(Punktedifferenz) aus
-  difference:=StrtoInt(points_team1)-StrtoInt(points_team2);
-  if (difference=0)then
+  if(sport='basketballrangliste')then
   begin
-    Teampoints[1]:=500;
-    Teampoints[2]:=500;
+    //sport ist die aktuell ausgewählte Tabelle in der ersten Form
+    //Gibt die Ranglistenpunkte anhand der Korbdifferenz(Punktedifferenz) eine Basketballspiels aus
+    difference:=StrtoInt(points_team1)-StrtoInt(points_team2);
+    if (difference=0)then
+    begin
+      Teampoints[1]:=500;
+      Teampoints[2]:=500;
+    end
+    else if(difference>0)then
+    //Team 1 Gewinnt
+    begin
+      if(difference<10)then
+      begin
+        Teampoints[1]:=600;
+        Teampoints[2]:=400;
+      end
+      else if(difference<20)then
+      begin
+        Teampoints[2]:=700;
+        Teampoints[1]:=300;
+      end
+      else Teampoints[1]:=800;Teampoints[2]:=200;
+    end
+    else if(difference<0)then
+    //Team 2 Gewinnt
+    begin
+      if(difference>-10)then
+      begin
+        Teampoints[2]:=600;
+        Teampoints[1]:=400;
+      end
+      else if(difference>-20)then
+      begin
+        Teampoints[2]:=700;
+        Teampoints[1]:=300;
+      end
+      else Teampoints[2]:=800;Teampoints[1]:=200;
+    end;
+    Result:=Teampoints;
   end
-  else if(difference>0)then
-  //Team 1 Gewinnt
+  else if(sport='fussballrangliste')then
   begin
-    if(difference<10)then
+    //Gibt die Ranglistenpunkte anhand der Tore aus
+    difference:=StrtoInt(points_team1)-StrtoInt(points_team2);
+    if (difference=0)then
     begin
-      Teampoints[1]:=600;
-      Teampoints[2]:=400;
+      Teampoints[1]:=0.5;
+      Teampoints[2]:=0.5;
     end
-    else if(difference<20)then
+    else if(difference>0)then
+    //Team 1 Gewinnt
     begin
-      Teampoints[2]:=700;
-      Teampoints[1]:=300;
+      if(difference>0)then
+      begin
+        Teampoints[1]:=1;
+        Teampoints[2]:=0;
+      end
+      else Teampoints[1]:=800;Teampoints[2]:=200;
     end
-    else Teampoints[1]:=800;Teampoints[2]:=200;
-  end
-  else if(difference<0)then
-  //Team 2 Gewinnt
-  begin
-    if(difference>-10)then
+    else if(difference<0)then
+    //Team 2 Gewinnt
     begin
-      Teampoints[2]:=600;
-      Teampoints[1]:=400;
-    end
-    else if(difference>-20)then
-    begin
-      Teampoints[2]:=700;
-      Teampoints[1]:=300;
-    end
-    else Teampoints[2]:=800;Teampoints[1]:=200;
+      Teampoints[2]:=1;
+      Teampoints[1]:=0;
+    end;
   end;
   Result:=Teampoints;
 end;

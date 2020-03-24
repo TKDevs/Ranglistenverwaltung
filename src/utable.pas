@@ -597,12 +597,8 @@ begin
     else if(difference>0)then
     //Team 1 Gewinnt
     begin
-      if(difference>0)then
-      begin
-        Teampoints[1]:=1;
-        Teampoints[2]:=0;
-      end
-      else Teampoints[1]:=0.5;Teampoints[2]:=0.5;
+      Teampoints[1]:=1;
+      Teampoints[2]:=0;
     end
     else if(difference<0)then
     //Team 2 Gewinnt

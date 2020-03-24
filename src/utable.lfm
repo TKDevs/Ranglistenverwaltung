@@ -20,6 +20,7 @@ object fm_table_view: Tfm_table_view
     Columns = <>
     DataSource = db_source_table
     TabOrder = 0
+    OnTitleClick = dbgridTitleClick
   end
   object ed_search: TEdit
     Left = 128
@@ -43,11 +44,134 @@ object fm_table_view: Tfm_table_view
     Height = 432
     Top = 8
     Width = 368
-    ActivePage = tab2
-    TabIndex = 1
+    ActivePage = tab1
+    TabIndex = 0
     TabOrder = 2
     object tab1: TTabSheet
       Caption = 'tab1'
+      ClientHeight = 404
+      ClientWidth = 360
+      object gb_add_team: TGroupBox
+        Left = 8
+        Height = 120
+        Top = 8
+        Width = 340
+        Caption = 'gb_add_team'
+        ClientHeight = 100
+        ClientWidth = 336
+        TabOrder = 0
+        object bt_add_team: TButton
+          Left = 184
+          Height = 25
+          Top = 56
+          Width = 144
+          Caption = 'bt_add_team'
+          TabOrder = 0
+        end
+        object lb_add_teamname: TLabel
+          Left = 8
+          Height = 15
+          Top = 24
+          Width = 97
+          Caption = 'lb_add_teamname'
+          ParentColor = False
+        end
+        object dblcb_add_team: TDBLookupComboBox
+          Left = 128
+          Height = 23
+          Top = 16
+          Width = 200
+          ListFieldIndex = 0
+          LookupCache = False
+          TabOrder = 1
+        end
+      end
+      object gb_delete_team: TGroupBox
+        Left = 8
+        Height = 120
+        Top = 140
+        Width = 340
+        Caption = 'gb_delete_team'
+        ClientHeight = 100
+        ClientWidth = 336
+        TabOrder = 1
+        object bt_delete_team: TButton
+          Left = 184
+          Height = 25
+          Top = 56
+          Width = 144
+          Caption = 'bt_delete_team'
+          TabOrder = 0
+        end
+        object lb_delete_teamname: TLabel
+          Left = 8
+          Height = 15
+          Top = 24
+          Width = 109
+          Caption = 'lb_delete_teamname'
+          ParentColor = False
+        end
+        object dblcb_delete_team: TDBLookupComboBox
+          Left = 128
+          Height = 23
+          Top = 16
+          Width = 200
+          ListFieldIndex = 0
+          LookupCache = False
+          TabOrder = 1
+        end
+      end
+      object gb_edit_team: TGroupBox
+        Left = 8
+        Height = 120
+        Top = 272
+        Width = 340
+        Caption = 'gb_edit_team'
+        ClientHeight = 100
+        ClientWidth = 336
+        TabOrder = 2
+        object bt_edit_team: TButton
+          Left = 184
+          Height = 25
+          Top = 68
+          Width = 144
+          Caption = 'bt_edit_team'
+          TabOrder = 0
+        end
+        object lb_edit_old_teamname: TLabel
+          Left = 8
+          Height = 15
+          Top = 16
+          Width = 119
+          Caption = 'lb_edit_old_teamname'
+          ParentColor = False
+        end
+        object ed_edit_teamname: TEdit
+          Left = 128
+          Height = 23
+          Top = 36
+          Width = 200
+          TabOrder = 1
+          Text = 'ed_edit_teamname'
+        end
+        object lb_edit_new_teamname: TLabel
+          Left = 8
+          Height = 15
+          Top = 44
+          Width = 124
+          Caption = 'lb_edit_new_teamname'
+          ParentColor = False
+        end
+        object dblcb_edit_team: TDBLookupComboBox
+          Left = 128
+          Height = 23
+          Top = 8
+          Width = 200
+          ListFieldIndex = 0
+          LookupCache = False
+          TabOrder = 2
+        end
+      end
     end
     object tab2: TTabSheet
       Caption = 'tab2'
@@ -130,7 +254,7 @@ object fm_table_view: Tfm_table_view
   end
   object menu_main: TMainMenu
     left = 24
-    top = 576
+    top = 536
     object menu_option: TMenuItem
       Caption = 'menu_option'
       object menu_language: TMenuItem
@@ -160,53 +284,53 @@ object fm_table_view: Tfm_table_view
   end
   object db_source_table: TDataSource
     DataSet = db_query_table
-    left = 64
-    top = 576
+    left = 136
+    top = 584
   end
   object db_query_table: TSQLQuery
     FieldDefs = <>
     Params = <>
-    left = 104
-    top = 576
+    left = 136
+    top = 536
   end
   object db_source_teams: TDataSource
-    left = 144
-    top = 576
+    left = 232
+    top = 584
   end
   object db_query_teams: TSQLQuery
     FieldDefs = <>
     Params = <>
-    left = 184
-    top = 576
+    left = 232
+    top = 536
   end
   object sd_export: TSaveDialog
-    left = 224
-    top = 576
+    left = 64
+    top = 536
   end
   object db_source_team1: TDataSource
-    left = 288
-    top = 576
+    left = 328
+    top = 584
   end
   object db_query_team1: TSQLQuery
     FieldDefs = <>
     Params = <>
-    left = 320
-    top = 576
+    left = 328
+    top = 536
   end
   object db_source_team2: TDataSource
-    left = 392
-    top = 576
+    left = 424
+    top = 584
   end
   object db_query_team2: TSQLQuery
     FieldDefs = <>
     Params = <>
-    left = 428
-    top = 576
+    left = 424
+    top = 536
   end
   object db_query_change: TSQLQuery
     FieldDefs = <>
     Params = <>
-    left = 536
-    top = 576
+    left = 544
+    top = 536
   end
 end

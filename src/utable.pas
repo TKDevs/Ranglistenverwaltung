@@ -6,25 +6,39 @@ interface
 
 uses
   Classes, SysUtils, Forms, Controls, Graphics, Dialogs, Menus, DBGrids,
-  DBCtrls, StdCtrls, ComCtrls, IniFiles, db, sqldb, FileUtil;
+  DBCtrls, StdCtrls, ComCtrls, ExtCtrls, IniFiles, db, sqldb, FileUtil;
 
 type
 
   { Tfm_table_view }
 
   Tfm_table_view = class(TForm)
+    bt_delete_team: TButton;
+    bt_edit_team: TButton;
     bt_insert_game: TButton;
+    bt_add_team: TButton;
+    dblcb_delete_team: TDBLookupComboBox;
+    dblcb_add_team: TDBLookupComboBox;
+    dblcb_edit_team: TDBLookupComboBox;
     db_source_team1: TDataSource;
     db_source_team2: TDataSource;
     db_source_teams: TDataSource;
     dblcb_team1: TDBLookupComboBox;
     dblcb_team2: TDBLookupComboBox;
+    ed_edit_teamname: TEdit;
     ed_search: TEdit;
     ed_points_team1: TEdit;
     ed_points_team2: TEdit;
+    gb_delete_team: TGroupBox;
+    gb_edit_team: TGroupBox;
     gb_team: TGroupBox;
     gb_points: TGroupBox;
+    gb_add_team: TGroupBox;
+    lb_add_teamname: TLabel;
+    lb_edit_old_teamname: TLabel;
+    lb_edit_new_teamname: TLabel;
     lb_search: TLabel;
+    lb_delete_teamname: TLabel;
     lb_vs: TLabel;
     menu_german: TMenuItem;
     menu_english: TMenuItem;
@@ -46,6 +60,7 @@ type
     tab1: TTabSheet;
     tab2: TTabSheet;
     procedure bt_insert_gameClick(Sender: TObject);
+    procedure dbgridTitleClick(Column: TColumn);
     procedure dblcb_team1Exit(Sender: TObject);
     procedure dblcb_team2Exit(Sender: TObject);
     procedure ed_points_team1KeyPress(Sender: TObject; var Key: char);
@@ -68,6 +83,8 @@ type
     procedure TeamSelection;
     procedure ExportTable(const grid:TDBGrid;const path:string);
   public
+  protected
+    table_sorted:boolean;
   end;
 
 var
@@ -87,6 +104,8 @@ uses umain;
 
 procedure Tfm_table_view.FormActivate(Sender: TObject);
 begin
+  table_sorted:=false;
+
   ConnectDatabase;
   ConnectDatabaseToGrid;
   TableSelection;
@@ -119,13 +138,13 @@ begin
   temp:=ACTIVE_TABLE;
   if(dblcb_team1.text='')or(dblcb_team2.text='')or(ed_points_team1.text='')or(ed_points_team2.text='')then
   begin
-    ShowMessage('Bitte die alle Felder korrekt ausfüllen!');
+    ShowMessage(LOAD_TRANSLATION('Info','inf_fields_empty',''));
   end
   else
   begin
     if((StrtoInt(ed_points_team1.text))=(StrtoInt(ed_points_team2.text)))then
     begin
-      showmessage('Es herrschte Gleichstand, daher werden keine Punkte vergeben!');
+      //gleichstand
     end
     else if((StrtoInt(ed_points_team1.text))<(StrtoInt(ed_points_team2.text)))then
     begin
@@ -171,6 +190,20 @@ begin
   ed_points_team2.Text:='';
 end;
 
+procedure Tfm_table_view.dbgridTitleClick(Column: TColumn);
+begin
+  if(table_sorted) then
+  begin
+    fm_tournament.SqlQuery('SELECT * FROM '+ACTIVE_TABLE+' ORDER BY '+Column.FieldName+' ASC;', db_query_table);
+    table_sorted:=false;
+  end
+  else
+  begin
+    fm_tournament.SqlQuery('SELECT * FROM '+ACTIVE_TABLE+' ORDER BY '+Column.FieldName+' DESC;', db_query_table);
+    table_sorted:=true;
+  end;
+end;
+
 procedure Tfm_table_view.dblcb_team2Exit(Sender: TObject);
 var
   temp:integer;
@@ -189,14 +222,14 @@ procedure Tfm_table_view.ed_points_team1KeyPress(Sender: TObject; var Key: char
   );
 begin
   if ((Length(ed_points_team1.text)>3) and (key<>#8))then key:=#0;
-  if not(key IN ['1'..'9',#8])then key:=#0;
+  if not(key IN ['0'..'9',#8])then key:=#0;
 end;
 
 procedure Tfm_table_view.ed_points_team2KeyPress(Sender: TObject; var Key: char
   );
 begin
   if ((Length(ed_points_team2.text)>3) and (key<>#8))then key:=#0;
-  if not(key IN ['1'..'9',#8])then key:=#0;
+  if not(key IN ['0'..'9',#8])then key:=#0;
 end;
 
 procedure Tfm_table_view.FormClose(Sender: TObject;
@@ -219,7 +252,7 @@ end;
 
 procedure Tfm_table_view.menu_backClick(Sender: TObject);
 begin
-  fm_tournament.Show;
+  fm_tournament.show;
   fm_table_view.hide;
 end;
 
@@ -281,12 +314,21 @@ begin
   lb_search.Caption:=LOAD_TRANSLATION('GUI','lb_search','');
   tab1.Caption:=LOAD_TRANSLATION('GUI','tab1','');
   tab2.Caption:=LOAD_TRANSLATION('GUI','tab2','');
-  bt_insert_game.Caption:=LOAD_TRANSLATION('GUI','bt_insert_game','');;
+  bt_insert_game.Caption:=LOAD_TRANSLATION('GUI','bt_insert_game','');
+  lb_add_teamname.Caption:=LOAD_TRANSLATION('GUI','lb_add_teamname','');
+  gb_add_team.Caption:=LOAD_TRANSLATION('GUI','gb_add_team','');
+  bt_add_team.Caption:=LOAD_TRANSLATION('GUI','bt_add_team','');      
+  lb_delete_teamname.Caption:=LOAD_TRANSLATION('GUI','lb_delete_teamname','');
+  gb_delete_team.Caption:=LOAD_TRANSLATION('GUI','gb_delete_team','');
+  bt_delete_team.Caption:=LOAD_TRANSLATION('GUI','bt_delete_team','');
+  lb_edit_old_teamname.Caption:=LOAD_TRANSLATION('GUI','lb_edit_old_teamname','');
+  lb_edit_new_teamname.Caption:=LOAD_TRANSLATION('GUI','lb_edit_new_teamname','');
+  gb_edit_team.Caption:=LOAD_TRANSLATION('GUI','gb_edit_team','');
+  bt_edit_team.Caption:=LOAD_TRANSLATION('GUI','bt_edit_team','');
 
   //Objektdarstellung
   //grid
   dbgrid.FastEditing:=false;
-  dbgrid.Enabled:=false;
   dbgrid.Top:=40;
   dbgrid.Left:=10;
   dbgrid.Width:=500;
@@ -301,11 +343,18 @@ begin
   dblcb_team2.ListSource:=db_source_teams;
   dblcb_team2.KeyField:='Teamname';
   dblcb_team2.AutoDropDown:=true;
+  dblcb_add_team.ListSource:=db_source_teams;
+  dblcb_add_team.KeyField:='Teamname';
+  dblcb_delete_team.ListSource:=db_source_teams;
+  dblcb_delete_team.KeyField:='Teamname';
+  dblcb_edit_team.ListSource:=db_source_teams;
+  dblcb_edit_team.KeyField:='Teamname';
 
   //edits
   ed_points_team1.text:='';
   ed_points_team2.text:='';
   ed_search.Text:='';
+  ed_edit_teamname.Text:='';
 
   //pagecontroller
   pc_controlles.Top:=10;

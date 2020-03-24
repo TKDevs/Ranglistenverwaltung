@@ -6,7 +6,8 @@ interface
 
 uses
   Classes, SysUtils, Forms, Controls, Graphics, Dialogs, Menus, DBGrids,
-  DBCtrls, StdCtrls, ComCtrls, ExtCtrls, IniFiles, db, sqldb, FileUtil;
+  DBCtrls, StdCtrls, ComCtrls, ExtCtrls, IniFiles, db, sqldb, odbcconn,
+  FileUtil;
 
 type
 
@@ -87,11 +88,8 @@ type
     procedure menu_exportClick(Sender: TObject);
     procedure menu_germanClick(Sender: TObject);
   private
-    procedure SQLUpdate(statement: AnsiString; var sql_query: TSQLQuery);
-    procedure SQLDelete(statement: AnsiString; var sql_query: TSQLQuery);
-    procedure SQLInsert(statement: AnsiString; var sql_query: TSQLQuery);
+    procedure SqlExecute(statement:AnsiString;var connector:TODBCConnection;var transaction:TSQLTransaction);
     procedure FormatGUI;
-    procedure ConnectDatabaseToGrid;
     procedure TableSelection;
     procedure ConnectDatabase;
     procedure TeamSelection;
@@ -100,7 +98,9 @@ type
     procedure ReconnectDatabase(const active_table_index:integer);
   public
   protected
-    table_sorted:boolean;
+    table_sorted:boolean; //Da die Komponente TDBGrid nicht alle Funktionen wie TStringGrid
+                          //benötigen wir eine globale variable zur Sortierung der Tabelle
+                          //um den wechsel zwischen ASC und DESC zu realisieren
   end;
 
 var
@@ -122,8 +122,7 @@ procedure Tfm_table_view.FormActivate(Sender: TObject);
 begin
   table_sorted:=false;
 
-  ConnectDatabase;
-  ConnectDatabaseToGrid;
+  ConnectDatabase; //zuständig für das legen der Verbindung bei erstem aufruf
   TableSelection;
   TeamSelection;
   FormatGUI;
@@ -185,67 +184,35 @@ begin
       //gleichstand
 
       //Ranglistenpunktzahl eintragen
-      fm_table_view.SqlUpdate('UPDATE ' + temp + ' SET Punktzahl=Punktzahl+' + Inttostr(Teampoints[1]) + ' WHERE Teamname=' + #39 + dblcb_team1.text + #39 + ';', db_query_change);
-      db_query_change.Edit;
-      db_query_change.FieldByName('Punktzahl').AsString:=inttostr(db_query_change.FieldByName('Punktzahl').AsInteger+Teampoints[1]);
-      db_query_change.post;
-      db_query_change.Clear;
-      fm_table_view.SqlUpdate('UPDATE ' + temp + ' SET Punktzahl=Punktzahl+' + Inttostr(Teampoints[2]) + ' WHERE Teamname=' + #39 + dblcb_team2.text + #39 + ';', db_query_change);
-      db_query_change.Edit;
-      db_query_change.FieldByName('Punktzahl').AsString:=inttostr(db_query_change.FieldByName('Punktzahl').AsInteger+Teampoints[2]);
-      db_query_change.post;
+      SqlExecute('UPDATE ' + temp + ' SET Punktzahl=Punktzahl+' + Inttostr(Teampoints[1]) + ' WHERE Teamname=' + #39 + dblcb_team1.text + #39 + ';',fm_tournament.db_connector,fm_tournament.db_transaction);
+      SqlExecute('UPDATE ' + temp + ' SET Punktzahl=Punktzahl+' + Inttostr(Teampoints[2]) + ' WHERE Teamname=' + #39 + dblcb_team2.text + #39 + ';',fm_tournament.db_connector,fm_tournament.db_transaction);
     end
     else if((StrtoInt(ed_points_team1.text))<(StrtoInt(ed_points_team2.text)))then
     begin
       //Siege und Niederlagen um 1 erhöhen
       //fieldauswählen
-      fm_table_view.SqlUpdate('UPDATE ' + temp + ' SET Siege=Siege+1 WHERE Teamname=' + #39 + dblcb_team2.text + #39 + ';', db_query_change);
-      db_query_change.Edit;
-      db_query_change.FieldByName('Siege').AsString:=inttostr(db_query_change.FieldByName('Siege').AsInteger+1);
-      db_query_change.post;
+      SqlExecute('UPDATE ' + temp + ' SET Siege=Siege+1 WHERE Teamname=' + #39 + dblcb_team2.text + #39 + ';',fm_tournament.db_connector,fm_tournament.db_transaction);
+
 
       //fieldauswählen
-      fm_table_view.SqlUpdate('UPDATE ' + temp + ' SET Niederlagen=Niederlagen+1 WHERE Teamname=' + #39 + dblcb_team1.text + #39 + ';', db_query_change);
-      db_query_change.Edit;
-      db_query_change.FieldByName('Niederlagen').AsString:=inttostr(db_query_change.FieldByName('Niederlagen').AsInteger+1);
-      db_query_change.post;
+      SqlExecute('UPDATE ' + temp + ' SET Niederlagen=Niederlagen+1 WHERE Teamname=' + #39 + dblcb_team1.text + #39 + ';',fm_tournament.db_connector,fm_tournament.db_transaction);
 
       //Ranglistenpunktzahl eintragen
-      fm_table_view.SqlUpdate('UPDATE ' + temp + ' SET Punktzahl=Punktzahl+' + Inttostr(Teampoints[1]) + ' WHERE Teamname=' + #39 + dblcb_team1.text + #39 + ';', db_query_change);
-      db_query_change.Edit;
-      db_query_change.FieldByName('Punktzahl').AsString:=inttostr(db_query_change.FieldByName('Punktzahl').AsInteger+Teampoints[1]);
-      db_query_change.post;
-      db_query_change.Clear;
-      fm_table_view.SqlUpdate('UPDATE ' + temp + ' SET Punktzahl=Punktzahl+' + Inttostr(Teampoints[2]) + ' WHERE Teamname=' + #39 + dblcb_team2.text + #39 + ';', db_query_change);
-      db_query_change.Edit;
-      db_query_change.FieldByName('Punktzahl').AsString:=inttostr(db_query_change.FieldByName('Punktzahl').AsInteger+Teampoints[2]);
-      db_query_change.post;
+      SqlExecute('UPDATE ' + temp + ' SET Punktzahl=Punktzahl+' + Inttostr(Teampoints[1]) + ' WHERE Teamname=' + #39 + dblcb_team1.text + #39 + ';',fm_tournament.db_connector,fm_tournament.db_transaction);
+      SqlExecute('UPDATE ' + temp + ' SET Punktzahl=Punktzahl+' + Inttostr(Teampoints[2]) + ' WHERE Teamname=' + #39 + dblcb_team2.text + #39 + ';',fm_tournament.db_connector,fm_tournament.db_transaction);
     end
     else
     begin
       //Siege und Niederlagen um 1 erhöhen
       //fieldauswählen
-      fm_table_view.SqlUpdate('UPDATE ' + temp + ' SET Siege=Siege+1 WHERE Teamname=' + #39 + dblcb_team1.text + #39 + ';', db_query_change);
-      db_query_change.Edit;
-      db_query_change.FieldByName('Siege').AsString:=inttostr(db_query_change.FieldByName('Siege').AsInteger+1);
-      db_query_change.post;
+      SqlExecute('UPDATE ' + temp + ' SET Siege=Siege+1 WHERE Teamname=' + #39 + dblcb_team1.text + #39 + ';',fm_tournament.db_connector,fm_tournament.db_transaction);
 
       //fieldauswählen
-      fm_table_view.SqlUpdate('UPDATE ' + temp + ' SET Niederlagen=Niederlagen+1 WHERE Teamname=' + #39 + dblcb_team2.text + #39 + ';', db_query_change);
-      db_query_change.Edit;
-      db_query_change.FieldByName('Niederlagen').AsString:=inttostr(db_query_change.FieldByName('Niederlagen').AsInteger+1);
-      db_query_change.post;
-      db_query_change.Clear;
+      SqlExecute('UPDATE ' + temp + ' SET Niederlagen=Niederlagen+1 WHERE Teamname=' + #39 + dblcb_team2.text + #39 + ';',fm_tournament.db_connector,fm_tournament.db_transaction);
 
       //Ranglistenpunkte eintragen
-      fm_table_view.SqlUpdate('UPDATE ' + temp + ' SET Punktzahl=Punktzahl+' + Inttostr(Teampoints[1]) + ' WHERE Teamname=' + #39 + dblcb_team1.text + #39 + ';', db_query_change);
-      db_query_change.Edit;
-      db_query_change.FieldByName('Punktzahl').AsString:=inttostr(db_query_change.FieldByName('Punktzahl').AsInteger+Teampoints[1]);
-      db_query_change.post;
-      fm_table_view.SqlUpdate('UPDATE ' + temp + ' SET Punktzahl=Punktzahl+' + Inttostr(Teampoints[2]) + ' WHERE Teamname=' + #39 + dblcb_team2.text + #39 + ';', db_query_change);
-      db_query_change.Edit;
-      db_query_change.FieldByName('Punktzahl').AsString:=inttostr(db_query_change.FieldByName('Punktzahl').AsInteger+Teampoints[2]);
-      db_query_change.post;
+      SqlExecute('UPDATE ' + temp + ' SET Punktzahl=Punktzahl+' + Inttostr(Teampoints[1]) + ' WHERE Teamname=' + #39 + dblcb_team1.text + #39 + ';',fm_tournament.db_connector,fm_tournament.db_transaction);
+      SqlExecute('UPDATE ' + temp + ' SET Punktzahl=Punktzahl+' + Inttostr(Teampoints[2]) + ' WHERE Teamname=' + #39 + dblcb_team2.text + #39 + ';',fm_tournament.db_connector,fm_tournament.db_transaction);
     end;
 
     //Da beim Hochladen der Information der Datenstrom in die andere Richtung geht muss nach der Änderung die Verbindung neu Aktiviert werden
@@ -266,10 +233,9 @@ begin
   temp:=ACTIVE_TABLE;
   temp_index:=fm_tournament.dblcb_tables.ItemIndex;
   if (ed_edit_teamname.text<>'')then
-  fm_table_view.SQLUpdate('UPDATE '+temp+' SET Teamname='+#39+ed_edit_teamname.text+#39+' WHERE Teamname='+#39+dblcb_edit_team.Text+#39+';', db_query_change);
-  db_query_change.Edit;
-  db_query_change.FieldByName('Teamname').AsString:=ed_edit_teamname.text;
-  db_query_change.post;
+  begin
+    SqlExecute('UPDATE '+temp+' SET Teamname='+#39+ed_edit_teamname.text+#39+' WHERE Teamname='+#39+dblcb_edit_team.Text+#39+';',fm_tournament.db_connector,fm_tournament.db_transaction);
+  end;
   ReconnectDatabase(temp_index);
 
   dblcb_edit_team.ListFieldIndex:=-1;
@@ -284,8 +250,7 @@ begin
   temp_index:=fm_tournament.dblcb_tables.ItemIndex;
   if(dblcb_delete_team.text<>'')then
   begin
-    fm_tournament.db_connector.ExecuteDirect('DELETE FROM '+temp+' WHERE Teamname='+#39+dblcb_delete_team.text+#39+';');
-    fm_tournament.db_transaction.Commit;
+    SqlExecute('DELETE FROM '+temp+' WHERE Teamname='+#39+dblcb_delete_team.text+#39+';',fm_tournament.db_connector,fm_tournament.db_transaction);
   end;
   ReconnectDatabase(temp_index);
 
@@ -301,8 +266,7 @@ begin
   temp_index:=fm_tournament.dblcb_tables.ItemIndex;
   if(ed_add_teamname.text<>'')then
   begin
-    fm_tournament.db_connector.ExecuteDirect('INSERT INTO '+temp+' (Teamname,Punktzahl,Siege,Niederlagen) VALUES('+#39+ed_add_teamname.text+#39+',0,0,0);');
-    fm_tournament.db_transaction.Commit;
+    SqlExecute('INSERT INTO '+temp+' (Teamname,Punktzahl,Siege,Niederlagen) VALUES('+#39+ed_add_teamname.text+#39+',0,0,0);',fm_tournament.db_connector,fm_tournament.db_transaction);
   end;
   ReconnectDatabase(temp_index);
 
@@ -426,7 +390,7 @@ begin
   if (sd_export.Execute) then
   begin
     try
-      ExportTable(dbgrid, sd_export.FileName);
+      ExportTable(dbgrid, sd_export.FileName+'.csv');
     except
       on e: Exception do
       ShowMessage(LOAD_TRANSLATION('Info','inf_save_fail',''));
@@ -441,28 +405,11 @@ begin
   FormatGUI;
 end;
 
-procedure Tfm_table_view.SQLUpdate(statement: AnsiString;
-  var sql_query: TSQLQuery);
+procedure Tfm_table_view.SqlExecute(statement: AnsiString;
+  var connector: TODBCConnection; var transaction: TSQLTransaction);
 begin
-  sql_query.Active:=false;
-  sql_query.UpdateSQL.text:=statement;
-  sql_query.Active:=true;
-end;
-
-procedure Tfm_table_view.SQLDelete(statement: AnsiString;
-  var sql_query: TSQLQuery);
-begin
-  sql_query.Active:=false;
-  sql_query.DeleteSQL.text:=statement;
-  sql_query.Active:=true;
-end;
-
-procedure Tfm_table_view.SQLInsert(statement: AnsiString;
-  var sql_query: TSQLQuery);
-begin
-  sql_query.Active:=false;
-  sql_query.InsertSQL.text:=statement;
-  sql_query.Active:=true;
+  connector.ExecuteDirect(statement);
+  transaction.Commit;
 end;
 
 procedure Tfm_table_view.FormatGUI;
@@ -505,16 +452,6 @@ begin
   dbgrid.AutoFillColumns:=true;
   dbgrid.ScrollBars:=ssNone;
 
-  //lookupcombobox
-  dblcb_team1.ListSource:=db_source_teams;
-  dblcb_team1.KeyField:='Teamname';
-  dblcb_team2.ListSource:=db_source_teams;
-  dblcb_team2.KeyField:='Teamname';
-  dblcb_delete_team.ListSource:=db_source_teams;
-  dblcb_delete_team.KeyField:='Teamname';
-  dblcb_edit_team.ListSource:=db_source_teams;
-  dblcb_edit_team.KeyField:='Teamname';
-
   //edits
   ed_points_team1.text:='';
   ed_points_team2.text:='';
@@ -528,11 +465,6 @@ begin
   pc_controlles.Width:=370;
   pc_controlles.Height:=430;
 
-end;
-
-procedure Tfm_table_view.ConnectDatabaseToGrid;
-begin
-  dbgrid.DataSource:=fm_table_view.db_source_table;
 end;
 
 procedure Tfm_table_view.TableSelection;
@@ -565,11 +497,24 @@ begin
   db_source_teams.DataSet:=db_query_teams;
   db_source_team1.DataSet:=db_query_team1;
   db_source_team2.DataSet:=db_query_team2;
+
+  //grid
+  dbgrid.DataSource:=fm_table_view.db_source_table;
+
+  //lookupcombobox
+  dblcb_team1.ListSource:=db_source_teams;
+  dblcb_team1.KeyField:='Teamname';
+  dblcb_team2.ListSource:=db_source_teams;
+  dblcb_team2.KeyField:='Teamname';
+  dblcb_delete_team.ListSource:=db_source_teams;
+  dblcb_delete_team.KeyField:='Teamname';
+  dblcb_edit_team.ListSource:=db_source_teams;
+  dblcb_edit_team.KeyField:='Teamname';
 end;
 
 procedure Tfm_table_view.TeamSelection;
 begin
-  //Lässt alle Teams Anzeigen
+  //Lässt alle Teams anzeigen
   fm_tournament.SqlQuery('SELECT Teamname FROM ' + ACTIVE_TABLE + ';', db_query_teams);
   fm_tournament.SqlQuery('SELECT * FROM '+ ACTIVE_TABLE+ ';',db_query_team1);          
   fm_tournament.SqlQuery('SELECT * FROM '+ ACTIVE_TABLE+ ';',db_query_team2);
@@ -580,13 +525,13 @@ var i,j:integer;
     sl:TStringList;
 begin
   sl:= TStringList.Create;
-  db_source_table.DataSet.First;
-  for i:= 1 to  db_source_table.DataSet.RecordCount do
+  grid.DataSource.DataSet.First;
+  for i:= 1 to  grid.DataSource.DataSet.RecordCount do
   begin
     sl.Add('');
-    db_source_table.DataSet.RecNo := i;
-    for j := 0 to db_source_table.DataSet.Fields.Count - 1 do
-      sl[SL.Count - 1]:= sl[sl.Count - 1] + db_source_table.DataSet.Fields[j].AsString + ';';
+    grid.DataSource.DataSet.RecNo := i;
+    for j := 0 to grid.DataSource.DataSet.Fields.Count - 1 do
+      sl[SL.Count - 1]:= sl[sl.Count - 1] + grid.DataSource.DataSet.Fields[j].AsString + ';';
   end;
   sl.SaveToFile(path);
   sl.Free;

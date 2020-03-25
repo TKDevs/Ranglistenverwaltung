@@ -90,7 +90,7 @@ begin
   fm_tournament.Width:=340;
   fm_tournament.Height:=95;
 
-  AssignLanguageFile('deutsch.ini');
+  AssignLanguageFile('data\deutsch.ini');
 end;
 
 procedure Tfm_tournament.FormDestroy(Sender: TObject);
@@ -105,13 +105,13 @@ end;
 
 procedure Tfm_tournament.menu_englishClick(Sender: TObject);
 begin
-  AssignLanguageFile('englisch.ini');
+  AssignLanguageFile('data\englisch.ini');
   FormatGUI;
 end;
 
 procedure Tfm_tournament.menu_germanClick(Sender: TObject);
 begin
-  AssignLanguageFile('deutsch.ini'); 
+  AssignLanguageFile('data\deutsch.ini'); 
   FormatGUI;
 end;
 

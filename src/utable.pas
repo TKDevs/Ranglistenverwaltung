@@ -388,7 +388,7 @@ end;
 
 procedure Tfm_table_view.menu_englishClick(Sender: TObject);
 begin
-  fm_tournament.AssignLanguageFile('englisch.ini');
+  fm_tournament.AssignLanguageFile('data\englisch.ini');
   FormatGUI;
 end;
 
@@ -408,7 +408,7 @@ end;
 
 procedure Tfm_table_view.menu_germanClick(Sender: TObject);
 begin
-  fm_tournament.AssignLanguageFile('deutsch.ini');  
+  fm_tournament.AssignLanguageFile('data\deutsch.ini');  
   FormatGUI;
 end;
 
@@ -649,16 +649,16 @@ begin
   //dynamisches Laden der Bilder passend zur Sportart
    if(ACTIVE_TABLE='basketballrangliste')then
   begin
-    Sportimage.Picture.LoadFromFile('basketball.png');
+    Sportimage.Picture.LoadFromFile('data\basketball.png');
   end
   else if(ACTIVE_TABLE='fussballrangliste')then
   begin
-    Sportimage.Picture.LoadFromFile('soccer.png');
+    Sportimage.Picture.LoadFromFile('data\soccer.png');
   end;
   Sportimage.Left:=round((fm_table_view.Width/2)-(Sportimage.width/2));
 
   //Bild vor der Suchleiste
-  search_icon.Picture.LoadFromFile('search.png');
+  search_icon.Picture.LoadFromFile('data\search.png');
 end;
 
 end.

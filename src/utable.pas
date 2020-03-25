@@ -37,6 +37,9 @@ type
     gb_team: TGroupBox;
     gb_points: TGroupBox;
     gb_add_team: TGroupBox;
+    search_icon: TImage;
+    lb_sport: TLabel;
+    Sportimage: TImage;
     lb_add_teamname: TLabel;
     lb_edit_old_teamname: TLabel;
     lb_edit_new_teamname: TLabel;
@@ -96,6 +99,7 @@ type
     procedure ExportTable(const grid:TDBGrid;const path:string);
     function Pointdifference(const points_team1,points_team2,sport:string):TTeampoints;
     procedure ReconnectDatabase(const active_table_index:integer);
+    procedure LoadImages;
   public
   protected
     table_sorted:boolean; //Da die Komponente TDBGrid nicht alle Funktionen wie TStringGrid
@@ -125,7 +129,8 @@ begin
   ConnectDatabase; //zuständig für das legen der Verbindung bei erstem aufruf
   TableSelection;
   TeamSelection;
-  FormatGUI;
+  FormatGUI;  //Formate und Größen der GUI-Elemente
+  LoadImages;  //Lädt alle Bilder
 end;
 
 procedure Tfm_table_view.ed_searchChange(Sender: TObject);
@@ -357,13 +362,13 @@ end;
 
 procedure Tfm_table_view.FormCreate(Sender: TObject);
 begin
-  //Formatierung der Form
+  //Formatierung des Formulars
   fm_table_view.BorderIcons:=[biSystemMenu];
   fm_table_view.Top:=50;
   fm_table_view.Left:=50;
   fm_table_view.dbgrid.Align:=alNone;
-  fm_table_view.Constraints.MinHeight:=470;
-  fm_table_view.Constraints.MaxHeight:=470;
+  fm_table_view.Constraints.MinHeight:=576;
+  fm_table_view.Constraints.MaxHeight:=576;
   fm_table_view.Constraints.MinWidth:=910;
   fm_table_view.Constraints.MaxWidth:=910;
   pc_controlles.TabIndex:=0;
@@ -443,11 +448,12 @@ begin
   lb_edit_new_teamname.Caption:=LOAD_TRANSLATION('GUI','lb_edit_new_teamname','');
   gb_edit_team.Caption:=LOAD_TRANSLATION('GUI','gb_edit_team','');
   bt_edit_team.Caption:=LOAD_TRANSLATION('GUI','bt_edit_team','');
+  lb_sport.Caption:=LOAD_TRANSLATION('GUI','lb_sport_'+ACTIVE_TABLE,'');;
 
   //Objektdarstellung
   //grid
   dbgrid.FastEditing:=false;
-  dbgrid.Top:=40;
+  dbgrid.Top:=146; //30 mehr als pagecontroller und Suchleiste
   dbgrid.Left:=10;
   dbgrid.Width:=500;
   dbgrid.Height:=400;
@@ -458,15 +464,29 @@ begin
   ed_points_team1.text:='';
   ed_points_team2.text:='';
   ed_search.Text:='';
+  ed_search.Top:=116;
+  ed_search.Left:=lb_search.Width+lb_search.Left+50;
+  ed_search.Width:=dbgrid.Width-lb_search.width-50;
   ed_edit_teamname.Text:='';
   ed_add_teamname.Text:='';
+
+  //Labels
+  lb_search.Top:=120;
+  lb_search.Left:=10;
+  lb_sport.Top:=32;
+  lb_sport.Left:=64;
 
   //pagecontroller
   pc_controlles.Top:=10;
   pc_controlles.Left:=530;
   pc_controlles.Width:=370;
-  pc_controlles.Height:=430;
+  pc_controlles.Height:=536;//430
 
+  //images
+  Sportimage.Top:=10;
+  Sportimage.width:=96;
+  search_icon.Top:=ed_search.Top;
+  search_icon.Left:=ed_search.Left-search_icon.width-2;
 end;
 
 procedure Tfm_table_view.TableSelection;
@@ -622,6 +642,23 @@ begin
   db_query_team1.Active:=true;
   db_query_team2.Active:=true;
   db_query_teams.Active:=true;
+end;
+
+procedure Tfm_table_view.LoadImages;
+begin
+  //dynamisches Laden der Bilder passend zur Sportart
+   if(ACTIVE_TABLE='basketballrangliste')then
+  begin
+    Sportimage.Picture.LoadFromFile('basketball.png');
+  end
+  else if(ACTIVE_TABLE='fussballrangliste')then
+  begin
+    Sportimage.Picture.LoadFromFile('soccer.png');
+  end;
+  Sportimage.Left:=round((fm_table_view.Width/2)-(Sportimage.width/2));
+
+  //Bild vor der Suchleiste
+  search_icon.Picture.LoadFromFile('search.png');
 end;
 
 end.

@@ -1,4 +1,0 @@
-Punkte hängen an der Korbdifferenz
-<10 sind 600 Punkte güt Gew. und 400 Verl.
-10-19 sind 700 Punkte Gew. und 300 Verl.
->=20 800 Punkte Gew und 200 Verl.

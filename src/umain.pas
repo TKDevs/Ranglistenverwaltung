@@ -84,6 +84,7 @@ end;
 procedure Tfm_tournament.FormCreate(Sender: TObject);
 begin
   //Formatierungen der Form
+  fm_tournament.BorderIcons:=[biSystemMenu];
   fm_tournament.Top:=10;
   fm_tournament.Left:=10;
   fm_tournament.Width:=340;

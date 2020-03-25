@@ -358,6 +358,7 @@ end;
 procedure Tfm_table_view.FormCreate(Sender: TObject);
 begin
   //Formatierung der Form
+  fm_table_view.BorderIcons:=[biSystemMenu];
   fm_table_view.Top:=50;
   fm_table_view.Left:=50;
   fm_table_view.dbgrid.Align:=alNone;

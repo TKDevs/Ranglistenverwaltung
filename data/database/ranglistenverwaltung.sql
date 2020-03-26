@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Erstellungszeit: 24. Mrz 2020 um 18:28
+-- Erstellungszeit: 26. Mrz 2020 um 13:40
 -- Server-Version: 10.4.11-MariaDB
 -- PHP-Version: 7.4.3
 
@@ -19,10 +19,10 @@ SET time_zone = "+00:00";
 /*!40101 SET NAMES utf8mb4 */;
 
 --
--- Datenbank: `tunierauswertung`
+-- Datenbank: `ranglistenverwaltung`
 --
-CREATE DATABASE IF NOT EXISTS `tunierauswertung` DEFAULT CHARACTER SET latin1 COLLATE latin1_german1_ci;
-USE `tunierauswertung`;
+CREATE DATABASE IF NOT EXISTS `ranglistenverwaltung` DEFAULT CHARACTER SET latin1 COLLATE latin1_german1_ci;
+USE `ranglistenverwaltung`;
 
 -- --------------------------------------------------------
 
@@ -42,8 +42,8 @@ CREATE TABLE `basketballrangliste` (
 --
 
 INSERT INTO `basketballrangliste` (`Teamname`, `Punktzahl`, `Siege`, `Niederlagen`) VALUES
-('Kentucky Tigers', 800, 0, 7),
-('Montana Eagles', 2300, 9, 1),
+('Kentucky Tigers', 1300, 0, 7),
+('Montana Eagles', 2800, 9, 1),
 ('New York Sharks', 200, 1, 2);
 
 -- --------------------------------------------------------
@@ -64,9 +64,24 @@ CREATE TABLE `fussballrangliste` (
 --
 
 INSERT INTO `fussballrangliste` (`Teamname`, `Punktzahl`, `Siege`, `Niederlagen`) VALUES
-('FC Kicker', 0, 0, 1),
-('FC Pfosten', 1, 1, 0),
-('FC Rasenball', 0, 0, 0);
+('1. FC Union Berlin', 0, 0, 0),
+('Bayer 04 Leverkusen', 0, 0, 0),
+('Borussia Dortmund', 0, 0, 0),
+('Borussia Mönchengladbach', 0, 0, 0),
+('Eintracht Frankfurt', 0, 0, 0),
+('FC Augsburg', 0, 0, 0),
+('FC Bayern München', 0, 0, 0),
+('FC Köln', 0, 0, 0),
+('FC Schalke 04', 0, 0, 0),
+('Fortuna Düsseldorf', 0, 0, 0),
+('FSV Mainz 05', 0, 0, 0),
+('Hertha BSC', 0, 0, 0),
+('RB Leipzig', 0, 0, 0),
+('SC Freibrug', 0, 0, 0),
+('SC Paderborn 07', 0, 0, 0),
+('TSG 1899 Hoffenheim', 0, 0, 0),
+('VFL Wolfsburg', 0, 0, 0),
+('Werder Bremen', 0, 0, 0);
 
 --
 -- Indizes der exportierten Tabellen

@@ -1,4 +1,4 @@
-# Turnierauswertung
+# Ranglistenverwaltung
 [Trello Projektboard](https://trello.com/b/en6blsCW/turnierauswertung)
 
 	Ein Projekt für das Fach Informatiksysteme von Jonas Tröger und Paul Kern.

@@ -80,7 +80,6 @@ type
     procedure dblcb_team2KeyPress(Sender: TObject; var Key: char);
     procedure ed_edit_teamnameKeyPress(Sender: TObject; var Key: char);
     procedure ed_points_team1KeyPress(Sender: TObject; var Key: char);
-    procedure ed_points_team2KeyPress(Sender: TObject; var Key: char);
     procedure ed_searchChange(Sender: TObject);
     procedure FormActivate(Sender: TObject);
     procedure FormClose(Sender: TObject; var CloseAction: TCloseAction);
@@ -115,7 +114,7 @@ implementation
 
 uses umain;
 
-//preprocessing commands
+//preprocessing commands werden vor dem Aufruf des Compilers ausgeführt
 {$R *.lfm}
 {$macro on}
 {$define ACTIVE_TABLE := fm_tournament.dblcb_tables.Items[fm_tournament.dblcb_tables.ItemIndex]}
@@ -127,16 +126,17 @@ procedure Tfm_table_view.FormActivate(Sender: TObject);
 begin
   table_sorted:=false;
 
-  ConnectDatabase; //zuständig für das legen der Verbindung bei erstem aufruf
+  ConnectDatabase;
   TableSelection;
   TeamSelection;
-  FormatGUI;  //Formate und Größen der GUI-Elemente
-  LoadImages;  //Lädt alle Bilder
+  FormatGUI;
+  LoadImages;
   FixGridColWidth;
 end;
 
 procedure Tfm_table_view.ed_searchChange(Sender: TObject);
 begin
+  //Suchleiste nach Namen
   fm_tournament.SqlQuery('SELECT * FROM ' + ACTIVE_TABLE + ' WHERE Teamname like '+#39+'%'+ ed_search.text + '%' +#39+ ';', db_query_table);
   FixGridColWidth;
 end;
@@ -145,20 +145,30 @@ procedure Tfm_table_view.dblcb_team1Exit(Sender: TObject);
 var
   lastteam:string;
   i,index:integer;
-begin   
+begin
+  //Sorgt dafür, dass ein Team sobald es ausgewählt wurde, nicht in der anderen
+  //combobox ausgewählt werden kann
+
   lastteam:='';
   index:=0;
+
+  //das aktuelle Team wird sich gemerkt
   if(dblcb_team2.ItemIndex<>-1)then lastteam:=dblcb_team2.items[dblcb_team2.ItemIndex];
+
+  //ändern des SQL Befehls um ausgewähltes Team zu enfernen
   if(dblcb_team1.ItemIndex<>-1)then
   begin
     fm_tournament.SqlQuery('SELECT Teamname FROM ' + ACTIVE_TABLE + ' WHERE NOT Teamname = ' + #39 + dblcb_team1.Text + #39 + ';', db_query_team2);
     dblcb_team2.ListSource:=db_source_team2;
     dblcb_team2.KeyField:='Teamname';
   end;
+
+  //finden des neuen Index für das ausgewähte Team
   for i:=0 to dblcb_team2.Items.Count-1 do
   begin
     if(dblcb_team2.Items[i]=lastteam)then index:=i;
   end;
+
   dblcb_team2.ItemIndex:=index;
 end;
 
@@ -177,6 +187,9 @@ var temp:AnsiString;
     temp_index:integer; 
     Teampoints:TTeampoints;
 begin
+  //sorgt für das Eintragen eines Spiels
+
+  //check ob alle Felder gefühlt sind
   if(dblcb_team1.text='')or(dblcb_team2.text='')or(ed_points_team1.text='')or(ed_points_team2.text='')then
   begin
     ShowMessage(LOAD_TRANSLATION('Info','inf_fields_empty',''));
@@ -185,6 +198,7 @@ begin
   begin
     Teampoints:=Pointdifference(ed_points_team1.text,ed_points_team2.text,ACTIVE_TABLE);
     DecimalSeparator:='.';
+
     //Da die Verbindung währen dem Ändern der Einträge unterbrochen wird muss die
     //Referenz, welche Tabelle ausgewählt ist, zwischengespeichert werden
     temp_index:=fm_tournament.dblcb_tables.ItemIndex;
@@ -201,11 +215,7 @@ begin
     else if((StrtoInt(ed_points_team1.text))<(StrtoInt(ed_points_team2.text)))then
     begin
       //Siege und Niederlagen um 1 erhöhen
-      //fieldauswählen
       SqlExecute('UPDATE ' + temp + ' SET Siege=Siege+1 WHERE Teamname=' + #39 + dblcb_team2.text + #39 + ';',fm_tournament.db_connector,fm_tournament.db_transaction);
-
-
-      //fieldauswählen
       SqlExecute('UPDATE ' + temp + ' SET Niederlagen=Niederlagen+1 WHERE Teamname=' + #39 + dblcb_team1.text + #39 + ';',fm_tournament.db_connector,fm_tournament.db_transaction);
 
       //Ranglistenpunktzahl eintragen
@@ -215,10 +225,7 @@ begin
     else
     begin
       //Siege und Niederlagen um 1 erhöhen
-      //fieldauswählen
       SqlExecute('UPDATE ' + temp + ' SET Siege=Siege+1 WHERE Teamname=' + #39 + dblcb_team1.text + #39 + ';',fm_tournament.db_connector,fm_tournament.db_transaction);
-
-      //fieldauswählen
       SqlExecute('UPDATE ' + temp + ' SET Niederlagen=Niederlagen+1 WHERE Teamname=' + #39 + dblcb_team2.text + #39 + ';',fm_tournament.db_connector,fm_tournament.db_transaction);
 
       //Ranglistenpunkte eintragen
@@ -241,14 +248,21 @@ procedure Tfm_table_view.bt_edit_teamClick(Sender: TObject);
 var temp_index:integer;
     temp:string;
 begin
+  //Änderung des Namens eines Teams
+
+  //zwischenspeichern der Referenz
   temp:=ACTIVE_TABLE;
   temp_index:=fm_tournament.dblcb_tables.ItemIndex;
+
+  //Ändern des Namens
   if (ed_edit_teamname.text<>'')then
   begin
     SqlExecute('UPDATE '+temp+' SET Teamname='+#39+ed_edit_teamname.text+#39+' WHERE Teamname='+#39+dblcb_edit_team.Text+#39+';',fm_tournament.db_connector,fm_tournament.db_transaction);
   end;
+
   ReconnectDatabase(temp_index);
 
+  //Zurücksetzten der Felder
   dblcb_edit_team.ListFieldIndex:=-1;
   ed_edit_teamname.Text:='';
 end;
@@ -257,14 +271,21 @@ procedure Tfm_table_view.bt_delete_teamClick(Sender: TObject);
 var temp_index:integer;
     temp:string;
 begin
+  //Löschen eines Teams
+
+  //zwischenspeichern der Referenz
   temp:=ACTIVE_TABLE;
   temp_index:=fm_tournament.dblcb_tables.ItemIndex;
+
+  //löschen des Eintrages
   if(dblcb_delete_team.text<>'')then
   begin
     SqlExecute('DELETE FROM '+temp+' WHERE Teamname='+#39+dblcb_delete_team.text+#39+';',fm_tournament.db_connector,fm_tournament.db_transaction);
   end;
+
   ReconnectDatabase(temp_index);
 
+  //Zurücksetzten der Felder
   dblcb_edit_team.ListFieldIndex:=-1;
   dblcb_delete_team.ListFieldIndex:=-1;
 end;
@@ -273,20 +294,30 @@ procedure Tfm_table_view.bt_add_teamClick(Sender: TObject);
 var temp_index:integer;
     temp:string;
 begin
+  //Hinzufügen eines Teams mit genullten Werten
+
+  //zwischenspeichern der Referenz
   temp:=ACTIVE_TABLE;
   temp_index:=fm_tournament.dblcb_tables.ItemIndex;
+
+  //Hinzufügend es Teams
   if(ed_add_teamname.text<>'')then
   begin
     SqlExecute('INSERT INTO '+temp+' (Teamname,Punktzahl,Siege,Niederlagen) VALUES('+#39+ed_add_teamname.text+#39+',0,0,0);',fm_tournament.db_connector,fm_tournament.db_transaction);
   end;
+
   ReconnectDatabase(temp_index);
 
+  //Zurücksetzten der Felder
   dblcb_edit_team.ListFieldIndex:=-1;
   ed_add_teamname.Text:='';
 end;
 
 procedure Tfm_table_view.dbgridTitleClick(Column: TColumn);
 begin
+  //Sortieren der Tabelle nach dem Attribut auf welches geclickt wird
+
+  //wenn die Tabelle bereits nach dem selben Attribut sortiert wurde wird sie aufsteigend sortiert
   if(table_sorted) then
   begin
     fm_tournament.SqlQuery('SELECT * FROM '+ACTIVE_TABLE+' ORDER BY '+Column.FieldName+' ASC;', db_query_table);
@@ -294,6 +325,7 @@ begin
   end
   else
   begin
+    //wenn die Tabelle noch nicht nach dem selben Attribut sortiert wurde wird sie absteigend sortiert
     fm_tournament.SqlQuery('SELECT * FROM '+ACTIVE_TABLE+' ORDER BY '+Column.FieldName+' DESC;', db_query_table);
     table_sorted:=true;
   end;
@@ -319,15 +351,24 @@ var
   lastteam:string;
   i,index:integer;
 begin
+  //Sorgt dafür, dass ein Team sobald es ausgewählt wurde, nicht in der anderen
+  //combobox ausgewählt werden kann
+
   lastteam:='';
   index:=0;
+
+  //das aktuelle Team wird sich gemerkt
   if(dblcb_team1.ItemIndex<>-1) then lastteam:=dblcb_team1.items[dblcb_team1.ItemIndex];
+
+  //ändern des SQL Befehls um ausgewähltes Team zu enfernen
   if(dblcb_team2.ItemIndex<>-1)then
   begin
     fm_tournament.SqlQuery('SELECT Teamname FROM ' + ACTIVE_TABLE + ' WHERE NOT Teamname = ' + #39 + dblcb_team2.Text + #39 + ';', db_query_team1);
     dblcb_team1.ListSource:=db_source_team1;
     dblcb_team1.KeyField:='Teamname';
-  end;            
+  end;
+
+  //finden des neuen Index für das ausgewähte Team
   for i:=0 to dblcb_team1.Items.Count-1 do
   begin
     if(dblcb_team1.Items[i]=lastteam)then index:=i;
@@ -335,15 +376,13 @@ begin
   dblcb_team1.ItemIndex:=index;
 end;
 
-procedure Tfm_table_view.dblcb_team2KeyPress(Sender: TObject; var Key: char);
-begin
-
-end;
-
 procedure Tfm_table_view.ed_edit_teamnameKeyPress(Sender: TObject; var Key: char
   );
 begin
+  //Limitierung der Länge des eingegebenen STrings
   if((Length(ed_edit_teamname.Text)>35) and (key<>#8))then key:=#0;
+
+  //Nur Buchstaben, Zahlen, Punkte, und Backspace ist erlaubt
   if(not(key IN [#8,#32,#46,#48..#57,#65..#90,#97..#122]))then key:=#0;
 end;
 
@@ -357,7 +396,10 @@ end;
 procedure Tfm_table_view.ed_points_team2KeyPress(Sender: TObject; var Key: char
   );
 begin
+  //Limitierung der Größe der eingegebenen Punkte
   if ((Length(ed_points_team2.text)>3) and (key<>#8))then key:=#0;
+
+  //bur Zahlen und Backspace ist erlaubt
   if not(key IN ['0'..'9',#8])then key:=#0;
 end;
 
@@ -395,6 +437,7 @@ end;
 
 procedure Tfm_table_view.menu_englishClick(Sender: TObject);
 begin
+  //Sprachauswahl wird realisiert
   fm_tournament.AssignLanguageFile('data\englisch.ini');
   FormatGUI;
 end;
@@ -414,13 +457,15 @@ begin
 end;
 
 procedure Tfm_table_view.menu_germanClick(Sender: TObject);
-begin
+begin      
+  //Sprachauswahl wird realisiert
   fm_tournament.AssignLanguageFile('data\deutsch.ini');  
   FormatGUI;
 end;
 
 procedure Tfm_table_view.FixGridColWidth;
 begin
+  //passt die Breiten der Zeilen an
   dbgrid.Columns.Items[0].Width:=245;
   dbgrid.Columns.Items[1].Width:=80;
   dbgrid.Columns.Items[2].Width:=80;
@@ -430,6 +475,7 @@ end;
 procedure Tfm_table_view.SqlExecute(statement: AnsiString;
   var connector: TODBCConnection; var transaction: TSQLTransaction);
 begin
+  //Funktion zum ausführen eines SQL Befehls
   connector.ExecuteDirect(statement);
   transaction.Commit;
 end;
@@ -506,7 +552,7 @@ end;
 
 procedure Tfm_table_view.TableSelection;
 begin
-  //Anzeigen der ausgewählten Tabelle
+  //Anzeigen der ausgewählten Tabelle im grid
   fm_tournament.SqlQuery('SELECT * FROM ' + ACTIVE_TABLE + ';', db_query_table);
   fm_tournament.SqlQuery('SELECT * FROM ' + ACTIVE_TABLE + ';', db_query_change);
   dbgrid.DataSource:=db_source_table;
@@ -514,6 +560,7 @@ end;
 
 procedure Tfm_table_view.ConnectDatabase;
 begin
+  //Legt die Verbindung mit der Datenbank
   //Query
   db_query_table.Transaction:=fm_tournament.db_transaction;
   db_query_table.DataBase:=fm_tournament.db_connector;
@@ -551,7 +598,7 @@ end;
 
 procedure Tfm_table_view.TeamSelection;
 begin
-  //Lässt alle Teams anzeigen
+  //Lässt alle Teams anzeigen (für comboboxen)
   fm_tournament.SqlQuery('SELECT Teamname FROM ' + ACTIVE_TABLE + ';', db_query_teams);
   fm_tournament.SqlQuery('SELECT * FROM '+ ACTIVE_TABLE+ ';',db_query_team1);          
   fm_tournament.SqlQuery('SELECT * FROM '+ ACTIVE_TABLE+ ';',db_query_team2);
@@ -561,8 +608,12 @@ procedure Tfm_table_view.ExportTable(const grid: TDBGrid; const path: string);
 var i,j:integer;
     sl:TStringList;
 begin
+  //Exportieren einer Tabelle als CSV
+
   sl:= TStringList.Create;
-  grid.DataSource.DataSet.First;
+  grid.DataSource.DataSet.First; //pointer wird an Begin des Datensatzes gesetz
+
+  //Der Datensatz der Tabelle wird reihenweise in die Stringlist gespeichert
   for i:= 1 to  grid.DataSource.DataSet.RecordCount do
   begin
     sl.Add('');
@@ -570,6 +621,8 @@ begin
     for j := 0 to grid.DataSource.DataSet.Fields.Count - 1 do
       sl[SL.Count - 1]:= sl[sl.Count - 1] + grid.DataSource.DataSet.Fields[j].AsString + ';';
   end;
+
+  //Speichern der Stringlist
   sl.SaveToFile(path);
   sl.Free;
 end;
@@ -580,6 +633,8 @@ var
   difference:integer;
   Teampoints:TTeampoints;
 begin
+  //Berechnet den Punkteunterschied für die verschiedenen Sportarten
+
   if(sport='basketballrangliste')then
   begin
     //sport ist die aktuell ausgewählte Tabelle in der ersten Form
@@ -649,6 +704,7 @@ end;
 
 procedure Tfm_table_view.ReconnectDatabase(const active_table_index: integer);
 begin
+  //Stellt die Verbindung zur Datenbank nach Änderungen wieder her
   fm_tournament.db_transaction.Active:=true;
   fm_tournament.db_query_start.Active:=true;
   fm_tournament.dblcb_tables.ItemIndex:=active_table_index;

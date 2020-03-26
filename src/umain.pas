@@ -78,12 +78,12 @@ end;
 procedure Tfm_tournament.dblcb_tablesKeyDown(Sender: TObject; var Key: Word;
   Shift: TShiftState);
 begin
-  Key:=0;
+  Key:=0;  //blockiert die Eingabe
 end;
 
 procedure Tfm_tournament.FormCreate(Sender: TObject);
 begin
-  //Formatierungen der Form
+  //Platzierung und Aussehen des Formulars
   fm_tournament.BorderIcons:=[biSystemMenu];
   fm_tournament.Top:=10;
   fm_tournament.Left:=10;
@@ -105,12 +105,14 @@ end;
 
 procedure Tfm_tournament.menu_englishClick(Sender: TObject);
 begin
+  //die englischen Texte werden in die GUI-Elemente geladen
   AssignLanguageFile('data\englisch.ini');
   FormatGUI;
 end;
 
 procedure Tfm_tournament.menu_germanClick(Sender: TObject);
 begin
+  //die deutschen Texte werdeb in die GUI-Elemente geladen
   AssignLanguageFile('data\deutsch.ini'); 
   FormatGUI;
 end;
@@ -146,7 +148,7 @@ procedure Tfm_tournament.AssignLanguageFile(filename:string);
 begin
   //Überprüft ob die Sprachdateien vorhanden sind
 
-  language.Free;
+  language.Free; //gibt Speicherplatz der Instanz frei, damit die bei Create neu erschaffen werden kann
 
   if(FileExists(filename)) then
   	language := TIniFile.Create(filename) //Stellt die Vebindung zur Inifile her
@@ -183,8 +185,6 @@ begin
   dblcb_tables.ItemIndex:=0; 
   dblcb_tables.AutoSelect:=false;
   dblcb_tables.Sorted:=true;
-
-  //Button
 end;
 
 procedure Tfm_tournament.TableSelection;

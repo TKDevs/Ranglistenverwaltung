@@ -77,9 +77,9 @@ type
     procedure dblcb_team1KeyPress(Sender: TObject; var Key: char);
     procedure dblcb_team2Click(Sender: TObject);
     procedure dblcb_team2Exit(Sender: TObject);
-    procedure dblcb_team2KeyPress(Sender: TObject; var Key: char);
     procedure ed_edit_teamnameKeyPress(Sender: TObject; var Key: char);
     procedure ed_points_team1KeyPress(Sender: TObject; var Key: char);
+    procedure ed_points_team2KeyPress(Sender: TObject; var Key: char);
     procedure ed_searchChange(Sender: TObject);
     procedure FormActivate(Sender: TObject);
     procedure FormClose(Sender: TObject; var CloseAction: TCloseAction);

@@ -1,7 +1,7 @@
 object fm_table_view: Tfm_table_view
-  Left = 961
+  Left = 862
   Height = 702
-  Top = 53
+  Top = 73
   Width = 914
   Caption = 'fm_table_view'
   ClientHeight = 682
@@ -10,7 +10,7 @@ object fm_table_view: Tfm_table_view
   OnActivate = FormActivate
   OnClose = FormClose
   OnCreate = FormCreate
-  LCLVersion = '2.0.6.0'
+  LCLVersion = '2.0.4.0'
   object dbgrid: TDBGrid
     Left = 8
     Height = 400
@@ -183,8 +183,8 @@ object fm_table_view: Tfm_table_view
     end
     object tab2: TTabSheet
       Caption = 'tab2'
-      ClientHeight = 404
-      ClientWidth = 360
+      ClientHeight = 508
+      ClientWidth = 362
       object gb_team: TGroupBox
         Left = 8
         Height = 72

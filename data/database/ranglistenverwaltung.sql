@@ -3,9 +3,9 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Erstellungszeit: 26. Mrz 2020 um 13:40
--- Server-Version: 10.4.11-MariaDB
--- PHP-Version: 7.4.3
+-- Generation Time: Mar 26, 2020 at 11:01 PM
+-- Server version: 10.4.11-MariaDB
+-- PHP Version: 7.4.3
 
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
 SET AUTOCOMMIT = 0;
@@ -19,7 +19,7 @@ SET time_zone = "+00:00";
 /*!40101 SET NAMES utf8mb4 */;
 
 --
--- Datenbank: `ranglistenverwaltung`
+-- Database: `ranglistenverwaltung`
 --
 CREATE DATABASE IF NOT EXISTS `ranglistenverwaltung` DEFAULT CHARACTER SET latin1 COLLATE latin1_german1_ci;
 USE `ranglistenverwaltung`;
@@ -27,7 +27,7 @@ USE `ranglistenverwaltung`;
 -- --------------------------------------------------------
 
 --
--- Tabellenstruktur für Tabelle `basketballrangliste`
+-- Table structure for table `basketballrangliste`
 --
 
 CREATE TABLE `basketballrangliste` (
@@ -38,18 +38,32 @@ CREATE TABLE `basketballrangliste` (
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_german1_ci;
 
 --
--- Daten für Tabelle `basketballrangliste`
+-- Dumping data for table `basketballrangliste`
 --
 
 INSERT INTO `basketballrangliste` (`Teamname`, `Punktzahl`, `Siege`, `Niederlagen`) VALUES
-('Kentucky Tigers', 1300, 0, 7),
-('Montana Eagles', 2800, 9, 1),
-('New York Sharks', 200, 1, 2);
+('ALBA Berlin', 0, 0, 0),
+('Basketball Loewen Braunschweig', 0, 0, 0),
+('BG Goettingen', 0, 0, 0),
+('Brose Bamberg', 0, 0, 0),
+('EWE Baskets Oldenburg', 0, 0, 0),
+('FC Bayern Basketball', 0, 0, 0),
+('FRAPORT SKYLINERS', 0, 0, 0),
+('HAKRO Merlins Crailsheim', 0, 0, 0),
+('Hamburg Towers', 0, 0, 0),
+('JobStairs GIESSEN 46ers', 0, 0, 0),
+('medi bayreuth', 0, 0, 0),
+('MHP Riesen Ludwigsburg', 0, 0, 0),
+('Rasta Vechta', 0, 0, 0),
+('ratiopharm ulm', 0, 0, 0),
+('s.Oliver Wuerzburg', 0, 0, 0),
+('SYNTAINIC MBC', 0, 0, 0),
+('Telekom Baskets Bonn', 0, 0, 0);
 
 -- --------------------------------------------------------
 
 --
--- Tabellenstruktur für Tabelle `fussballrangliste`
+-- Table structure for table `fussballrangliste`
 --
 
 CREATE TABLE `fussballrangliste` (
@@ -60,7 +74,7 @@ CREATE TABLE `fussballrangliste` (
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_german1_ci;
 
 --
--- Daten für Tabelle `fussballrangliste`
+-- Dumping data for table `fussballrangliste`
 --
 
 INSERT INTO `fussballrangliste` (`Teamname`, `Punktzahl`, `Siege`, `Niederlagen`) VALUES
@@ -84,17 +98,17 @@ INSERT INTO `fussballrangliste` (`Teamname`, `Punktzahl`, `Siege`, `Niederlagen`
 ('Werder Bremen', 0, 0, 0);
 
 --
--- Indizes der exportierten Tabellen
+-- Indexes for dumped tables
 --
 
 --
--- Indizes für die Tabelle `basketballrangliste`
+-- Indexes for table `basketballrangliste`
 --
 ALTER TABLE `basketballrangliste`
   ADD PRIMARY KEY (`Teamname`);
 
 --
--- Indizes für die Tabelle `fussballrangliste`
+-- Indexes for table `fussballrangliste`
 --
 ALTER TABLE `fussballrangliste`
   ADD PRIMARY KEY (`Teamname`);

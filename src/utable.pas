@@ -91,6 +91,7 @@ type
     procedure menu_exportClick(Sender: TObject);
     procedure menu_germanClick(Sender: TObject);
   private
+    procedure FixGridColWidth;
     procedure SqlExecute(statement:AnsiString;var connector:TODBCConnection;var transaction:TSQLTransaction);
     procedure FormatGUI;
     procedure TableSelection;
@@ -131,19 +132,23 @@ begin
   TeamSelection;
   FormatGUI;  //Formate und Größen der GUI-Elemente
   LoadImages;  //Lädt alle Bilder
+  FixGridColWidth;
 end;
 
 procedure Tfm_table_view.ed_searchChange(Sender: TObject);
 begin
   fm_tournament.SqlQuery('SELECT * FROM ' + ACTIVE_TABLE + ' WHERE Teamname like '+#39+'%'+ ed_search.text + '%' +#39+ ';', db_query_table);
+  FixGridColWidth;
 end;
 
 procedure Tfm_table_view.dblcb_team1Exit(Sender: TObject);
 var
   lastteam:string;
   i,index:integer;
-begin
-  if(dblcb_team2.ItemIndex<>-1) then lastteam:=dblcb_team2.items[dblcb_team2.ItemIndex];
+begin   
+  lastteam:='';
+  index:=0;
+  if(dblcb_team2.ItemIndex<>-1)then lastteam:=dblcb_team2.items[dblcb_team2.ItemIndex];
   if(dblcb_team1.ItemIndex<>-1)then
   begin
     fm_tournament.SqlQuery('SELECT Teamname FROM ' + ACTIVE_TABLE + ' WHERE NOT Teamname = ' + #39 + dblcb_team1.Text + #39 + ';', db_query_team2);
@@ -314,6 +319,8 @@ var
   lastteam:string;
   i,index:integer;
 begin
+  lastteam:='';
+  index:=0;
   if(dblcb_team1.ItemIndex<>-1) then lastteam:=dblcb_team1.items[dblcb_team1.ItemIndex];
   if(dblcb_team2.ItemIndex<>-1)then
   begin
@@ -337,7 +344,7 @@ procedure Tfm_table_view.ed_edit_teamnameKeyPress(Sender: TObject; var Key: char
   );
 begin
   if((Length(ed_edit_teamname.Text)>35) and (key<>#8))then key:=#0;
-  if((key=#27) or (key=#59) or (key=#40) or (key=#41) or (key=#91) or (key=#93) or (key=#123) or (key=#125) or (key=#34))then key:=#0;
+  if(not(key IN [#8,#32,#46,#48..#57,#65..#90,#97..#122]))then key:=#0;
 end;
 
 procedure Tfm_table_view.ed_points_team1KeyPress(Sender: TObject; var Key: char
@@ -412,6 +419,14 @@ begin
   FormatGUI;
 end;
 
+procedure Tfm_table_view.FixGridColWidth;
+begin
+  dbgrid.Columns.Items[0].Width:=245;
+  dbgrid.Columns.Items[1].Width:=80;
+  dbgrid.Columns.Items[2].Width:=80;
+  dbgrid.Columns.Items[3].Width:=80;
+end;
+
 procedure Tfm_table_view.SqlExecute(statement: AnsiString;
   var connector: TODBCConnection; var transaction: TSQLTransaction);
 begin
@@ -457,8 +472,8 @@ begin
   dbgrid.Left:=10;
   dbgrid.Width:=500;
   dbgrid.Height:=400;
-  dbgrid.AutoFillColumns:=true;
   dbgrid.ScrollBars:=ssNone;
+  dbgrid.ReadOnly:=true;
 
   //edits
   ed_points_team1.text:='';
@@ -641,7 +656,8 @@ begin
   db_query_change.Active:=true;
   db_query_team1.Active:=true;
   db_query_team2.Active:=true;
-  db_query_teams.Active:=true;
+  db_query_teams.Active:=true; 
+  FixGridColWidth;
 end;
 
 procedure Tfm_table_view.LoadImages;

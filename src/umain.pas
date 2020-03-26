@@ -118,7 +118,7 @@ end;
 procedure Tfm_tournament.ConnectDatabase;
 begin
   //Überprüfen der Verbindung zur Datenbank
-  db_connector.DatabaseName:='Turnierauswertung';
+  db_connector.DatabaseName:='Ranglistenverwaltung';
   try
     db_connector.Connected:=true;
   except
@@ -192,7 +192,7 @@ begin
   //Lässt alle Tabellen der Datenbank in der combobox anzeigen
   SqlQuery('SHOW TABLES;', db_query_start);
   dblcb_tables.ListSource:=db_source_start;
-  dblcb_tables.KeyField:='Tables_in_tunierauswertung';
+  dblcb_tables.KeyField:='Tables_in_ranglistenverwaltung';
 end;
 
 end.

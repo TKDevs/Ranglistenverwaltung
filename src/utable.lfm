@@ -44,8 +44,8 @@ object fm_table_view: Tfm_table_view
     Height = 536
     Top = 10
     Width = 370
-    ActivePage = tab1
-    TabIndex = 0
+    ActivePage = tab2
+    TabIndex = 1
     TabOrder = 2
     object tab1: TTabSheet
       Caption = 'tab1'
@@ -249,7 +249,6 @@ object fm_table_view: Tfm_table_view
           Height = 23
           Top = 8
           Width = 136
-          OnKeyPress = ed_points_team2KeyPress
           TabOrder = 1
         end
       end

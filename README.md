@@ -4,7 +4,7 @@
 	Ein Projekt für das Fach Informatiksysteme von Jonas Tröger und Paul Kern.
 	Eingebundene Themengebiete sind Datenbanken und Softwareentwicklung.
 	
-## Notizen:
+## Hinweise:
 	Keine Änderungen im Objektinspector außer Name!
 [Git commands](https://confluence.atlassian.com/bitbucketserver/basic-git-commands-776639767.html)
 

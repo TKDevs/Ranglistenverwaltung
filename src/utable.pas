@@ -329,6 +329,7 @@ begin
     fm_tournament.SqlQuery('SELECT * FROM '+ACTIVE_TABLE+' ORDER BY '+Column.FieldName+' DESC;', db_query_table);
     table_sorted:=true;
   end;
+  FixGridColWidth;
 end;
 
 procedure Tfm_table_view.dblcb_delete_teamClick(Sender: TObject);
